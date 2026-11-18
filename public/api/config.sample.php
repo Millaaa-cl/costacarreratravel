@@ -7,9 +7,11 @@
  * 2. Completa los valores.
  */
 return [
-    'base_url' => 'https://travelsanrafael.cl',   // sin barra final
+    'base_url' => 'https://travelsanrafael.cl',   // sin barra final. En el subdominio de prueba: https://prueba.travelsanrafael.cl
 
-    // Base de datos (cPanel → Bases de datos MySQL)
+    // Base de datos (cPanel → Bases de datos MySQL). Usa los nombres COMPLETOS que muestra cPanel,
+    // que empiezan con tu usuario de cPanel (ej: miusuario_tsr). Si dejas estos valores de ejemplo,
+    // el sistema ignora este archivo y lo avisa en el error_log.
     'db' => [
         'host' => 'localhost',
         'name' => 'usuario_travelsanrafael',

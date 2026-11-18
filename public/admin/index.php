@@ -21,7 +21,21 @@ function redirect(string $q, string $flash = '', bool $error = false): void { if
 function authed(): bool { return !empty($_SESSION['admin_id']) && ($_SESSION['ua'] ?? '') === ($_SERVER['HTTP_USER_AGENT'] ?? ''); }
 
 $p = (string)($_GET['p'] ?? 'bookings');
-$pdo = db();
+try {
+    $pdo = db();
+} catch (Throwable $e) {
+    // Antes esto dejaba la página en blanco. Se muestra qué revisar, sin datos sensibles (el detalle va al error_log).
+    log_error('admin db: ' . $e->getMessage());
+    http_response_code(500);
+    $cfgFile = config_file_label(); ?>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Panel: sin conexión</title>
+<style>body{font:15px/1.6 system-ui;background:#f3f9fb;color:#1d1d1b;margin:0}.box{max-width:560px;margin:10vh auto;background:#fff;padding:28px;border-radius:12px;border:1px solid #f3b4ad}h1{font-size:1.3rem;margin:0 0 12px;color:#8a1c12}code{background:#eef3f5;padding:2px 6px;border-radius:4px}</style></head><body>
+<div class="box"><h1>El panel no pudo conectarse a la base de datos</h1>
+<p>Archivo de configuración en uso: <code><?= htmlspecialchars($cfgFile) ?></code></p>
+<p>Revisa en ese archivo que <code>name</code>, <code>user</code> y <code>pass</code> sean los de cPanel → <strong>Bases de datos MySQL</strong> (empiezan con tu usuario de cPanel), y que el usuario esté agregado a la base con todos los privilegios.</p>
+<p>El detalle técnico quedó en el archivo <code>error_log</code> de esta carpeta.</p></div></body></html>
+<?php exit;
+}
 
 // ---------- Login / logout ----------
 if ($p === 'logout') { session_destroy(); redirect('?p=login'); }

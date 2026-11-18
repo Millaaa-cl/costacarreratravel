@@ -33,7 +33,7 @@ npm run package      # build + auditoría + travelsanrafael-public_html.zip list
 2. En cPanel → *Dominios* (o *Subdominios*), crea `prueba.travelsanrafael.cl`, anota su carpeta raíz y verifica que tenga SSL (*SSL/TLS Status* → *Run AutoSSL*).
 3. Crea una base de datos **aparte** para la prueba e importa `sql/schema.sql`.
 4. Sube y extrae el zip en la carpeta del subdominio.
-5. Copia `api/config.sample.php` como `api/config.php` **dentro de la carpeta del subdominio**. Completa `base_url` = `https://prueba.travelsanrafael.cl`, los datos de la base de prueba, las llaves del **sandbox** de Flow y `'sandbox' => true`.
+5. Copia `api/config.sample.php` como `api/config.php` **dentro de la carpeta del subdominio**. Completa `base_url` = `https://prueba.travelsanrafael.cl`, los datos de la base de prueba con los **nombres completos que muestra cPanel** (empiezan con tu usuario de cPanel; si quedan los de ejemplo, el sistema ignora el archivo), las llaves del **sandbox** de Flow y `'sandbox' => true`.
 6. Entra a `/admin/setup.php`, crea tu usuario, borra `setup.php` y crea algunas salidas.
 7. No protejas el subdominio con contraseña (*Privacidad de directorios*): Flow no podría avisar los pagos a `/api/flow-confirm.php`.
 

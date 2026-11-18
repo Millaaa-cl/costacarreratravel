@@ -17,13 +17,43 @@ function config(): array
         dirname(__DIR__) . '/config.php',         // <carpeta del sitio>/api/config.php
         dirname(__DIR__, 3) . '/tsr-config.php', // /home/USUARIO/tsr-config.php
     ];
+    $placeholder = null;
     foreach ($candidates as $file) {
-        if (is_file($file)) { $cfg = require $file; return $cfg; }
+        if (!is_file($file)) continue;
+        // ob_start descarta cualquier salida accidental del archivo (un BOM o espacios antes de "<?php"
+        // que agregan algunos editores), que rompería las cabeceras y el JSON de la API.
+        ob_start(); $c = require $file; ob_end_clean();
+        // Un archivo con los datos de ejemplo sin completar se salta (y se avisa), para no tapar a uno válido
+        if (!is_array($c) || config_is_placeholder($c)) { $placeholder ??= $file; log_error("Configuración con valores de ejemplo, se ignora: $file"); continue; }
+        $GLOBALS['__config_file'] = $file;
+        return $cfg = $c;
     }
+    log_error($placeholder ? "Solo hay configuración con valores de ejemplo: $placeholder" : 'No existe api/config.php ni tsr-config.php');
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => 'Backend no configurado (falta api/config.php o tsr-config.php).']);
+    echo json_encode(['error' => $placeholder
+        ? 'Backend sin configurar: ' . basename($placeholder) . ' tiene los datos de ejemplo (base de datos, usuario o contraseña).'
+        : 'Backend no configurado (falta api/config.php o tsr-config.php).']);
     exit;
+}
+
+/** true si la configuración conserva los valores de ejemplo de config.sample.php o de la guía. */
+function config_is_placeholder(array $c): bool
+{
+    $db = $c['db'] ?? [];
+    $name = (string)($db['name'] ?? ''); $user = (string)($db['user'] ?? ''); $pass = (string)($db['pass'] ?? '');
+    return $name === '' || $user === '' || $pass === '' || $pass === 'CAMBIAR'
+        || in_array($name, ['usuario_travelsanrafael', 'tuusuario_tsrprueba'], true)
+        || in_array($user, ['usuario_tsr', 'tuusuario_tsr'], true)
+        || str_starts_with($name, 'tuusuario_') || str_starts_with($user, 'tuusuario_');
+}
+
+/** Ruta (relativa, para mostrar) del archivo de configuración en uso. */
+function config_file_label(): string
+{
+    config();
+    $f = (string)($GLOBALS['__config_file'] ?? '');
+    return str_ends_with($f, '/api/config.php') ? 'api/config.php' : ($f ? 'tsr-config.php (fuera de la carpeta del sitio)' : '(ninguno)');
 }
 
 function db(): PDO

@@ -7,7 +7,13 @@ declare(strict_types=1);
 require_once __DIR__ . '/../api/lib/bootstrap.php';
 header('X-Robots-Tag: noindex');
 
-$pdo = db();
+try {
+    $pdo = db();
+} catch (Throwable $e) {
+    log_error('setup db: ' . $e->getMessage());
+    http_response_code(500);
+    exit('No se pudo conectar a la base de datos. Revisa name, user y pass en ' . htmlspecialchars(config_file_label()) . ' (deben ser los de cPanel → Bases de datos MySQL).');
+}
 $count = (int)$pdo->query('SELECT COUNT(*) FROM admins')->fetchColumn();
 $msg = '';
 if ($count > 0) {
