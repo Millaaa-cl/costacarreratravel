@@ -51,6 +51,14 @@ function countUp(el: HTMLElement) {
 const progress = document.querySelector<HTMLElement>('.progress');
 const header = document.querySelector<HTMLElement>('.site-header');
 const mobileCta = document.querySelector<HTMLElement>('.mobile-cta');
+const booking = document.getElementById('reservar');
+// Si esta página tiene el widget (home y ficha del tour), los botones "Reservar" que apuntan a otra página
+// (header, barra móvil, CTA final) bajan directo al widget en vez de cambiar de página.
+if (booking) {
+  document.querySelectorAll<HTMLAnchorElement>('a[href*="#reservar"]').forEach((a) => {
+    if (new URL(a.href, location.href).pathname !== location.pathname) a.setAttribute('href', '#reservar');
+  });
+}
 const hero = document.querySelector<HTMLElement>('.hero, .page-hero');
 const routes = Array.from(document.querySelectorAll<HTMLElement>('.route'));
 const parallax = Array.from(document.querySelectorAll<HTMLElement>('[data-parallax]'));
@@ -63,7 +71,12 @@ function onScroll() {
   const max = document.documentElement.scrollHeight - vh;
   progress?.style.setProperty('--p', String(max > 0 ? y / max : 0));
   header?.classList.toggle('is-scrolled', y > 24);
-  if (mobileCta) mobileCta.classList.toggle('is-visible', !hero || y > hero.offsetHeight * 0.7);
+  if (mobileCta) {
+    // Se oculta mientras el widget de reserva está en pantalla: ahí sobra y taparía el resumen y el botón de pago
+    const bk = booking?.getBoundingClientRect();
+    const inBooking = !!bk && bk.top < vh && bk.bottom > 0;
+    mobileCta.classList.toggle('is-visible', (!hero || y > hero.offsetHeight * 0.7) && !inBooking);
+  }
   if (!reduce) {
     routes.forEach((r) => {
       const b = r.getBoundingClientRect();

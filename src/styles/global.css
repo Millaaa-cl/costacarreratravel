@@ -459,6 +459,17 @@ p { margin: 0 0 1em; }
   .tour-layout > .booking { grid-area: booking; align-self: start; position: sticky; top: calc(var(--header-h) + 24px); }
   .tour-details { grid-area: details; }
 }
+/* Home: resumen + widget de reserva. Móvil: texto, widget, collage. Escritorio: texto y collage a la izquierda, widget sticky a la derecha */
+.overview--booking { grid-template-columns: minmax(0, 1fr); grid-template-areas: "text" "booking" "collage"; align-items: start; }
+.overview--booking .overview__text { grid-area: text; }
+.overview--booking > .booking { grid-area: booking; }
+.overview--booking .collage { grid-area: collage; }
+@media (min-width: 1080px) {
+  /* grid-template-rows auto + 1fr: el espacio que sobra por la altura del widget va bajo el collage, no entre el texto y el collage */
+  .overview--booking { grid-template-columns: minmax(0, 1fr) 410px; grid-template-rows: auto 1fr; grid-template-areas: "text booking" "collage booking"; column-gap: 72px; row-gap: 40px; }
+  .overview--booking .collage { align-self: start; }
+  .overview--booking > .booking { align-self: start; position: sticky; top: calc(var(--header-h) + 24px); }
+}
 .tour-overview .collage { margin-top: 40px; height: clamp(320px, 38vw, 460px); }
 .tour-block { padding-top: clamp(64px, 8vw, 104px); }
 .tour-block > .lead { margin-bottom: 40px; font-size: 1.05rem; }
@@ -488,7 +499,9 @@ p { margin: 0 0 1em; }
 .cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 .cal__wd { text-align: center; font-size: .72rem; color: var(--muted); font-weight: 700; padding: 4px 0 6px; }
 .cal__day { aspect-ratio: 1; border: 2px solid transparent; border-radius: 10px; background: none; font: inherit; font-size: .9rem; color: #b5babc; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.05; padding: 0; }
-.cal__day small { font-size: .58rem; }
+.cal__day small { font-size: .58rem; white-space: nowrap; }
+/* En celulares las casillas miden ~45 px: se muestra solo el número de cupos (el lector de pantalla lee el texto completo del aria-label) */
+@media (max-width: 480px) { .cal__day small { font-size: .68rem; font-weight: 700; } .cal__unit { display: none; } }
 .cal__day--open { background: var(--ice); color: var(--ink); cursor: pointer; font-weight: 700; transition: border-color .15s, transform .15s var(--ease); }
 .cal__day--open small { color: var(--teal-deep); font-weight: 600; }
 .cal__day--open:hover { border-color: var(--teal); transform: translateY(-2px); }
@@ -497,6 +510,13 @@ p { margin: 0 0 1em; }
 .cal__day--sel small { color: var(--teal-light) !important; }
 @keyframes pop { 50% { transform: scale(1.14); } }
 .cal__day--sold { text-decoration: line-through; }
+/* Leyenda bajo el calendario: explica el número de cada día (en celular se muestra solo el número) */
+.cal__legend { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .78rem; color: var(--muted); }
+.cal__legend li { display: flex; align-items: center; gap: 6px; }
+.cal__key { display: inline-grid; place-items: center; min-width: 26px; height: 22px; padding: 0 4px; border-radius: 6px; font-size: .7rem; font-weight: 700; }
+.cal__key--open { background: var(--ice); color: var(--teal-deep); }
+.cal__key--low { background: var(--ice); color: var(--red); }
+.cal__key--sold { color: #b5babc; text-decoration: line-through; }
 .cal__msg { font-size: .86rem; color: var(--muted); margin: 10px 0 0; min-height: 1.4em; }
 .pax { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
 .pax + .pax { border-top: 1px solid var(--line); }

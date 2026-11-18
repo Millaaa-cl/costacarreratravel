@@ -29,6 +29,11 @@ const i18n = { ...t, locale: lang === 'es' ? 'es-CL' : 'en-US', lang, wa: waLink
       <button type="button" class="cal__nav" data-next aria-label={t.next}>›</button>
     </div>
     <div class="cal__grid" data-grid role="grid"></div>
+    <ul class="cal__legend" aria-hidden="true">
+      <li><span class="cal__key cal__key--open">20</span>{lang === 'es' ? 'Cupos libres' : 'Seats left'}</li>
+      <li><span class="cal__key cal__key--low">3</span>{lang === 'es' ? 'Últimos cupos' : 'Last seats'}</li>
+      <li><span class="cal__key cal__key--sold">27</span>{lang === 'es' ? 'Agotado' : 'Sold out'}</li>
+    </ul>
     <p class="cal__msg" data-msg role="status">{t.loading}</p>
   </div>
 
@@ -134,7 +139,7 @@ const i18n = { ...t, locale: lang === 'es' ? 'es-CL' : 'en-US', lang, wa: waLink
         const dep = byDate.get(iso);
         if (dep && dep.seats > 0) {
           const cls = ['cal__day', 'cal__day--open', dep.seats <= 5 ? 'cal__day--low' : '', selected?.date === iso ? 'cal__day--sel' : ''].join(' ');
-          html += `<button type="button" class="${cls}" data-date="${iso}" aria-pressed="${selected?.date === iso}" aria-label="${iso}: ${dep.seats} ${T.seatsLeft}">${d}<small>${dep.seats} ${T.seatsLeft}</small></button>`;
+          html += `<button type="button" class="${cls}" data-date="${iso}" aria-pressed="${selected?.date === iso}" aria-label="${iso}: ${dep.seats} ${T.seatsLeft}">${d}<small>${dep.seats}<span class="cal__unit"> ${T.seatsLeft}</span></small></button>`;
         } else if (dep) {
           html += `<span class="cal__day cal__day--sold" title="${T.soldOut}">${d}</span>`;
         } else {
@@ -157,13 +162,13 @@ const i18n = { ...t, locale: lang === 'es' ? 'es-CL' : 'en-US', lang, wa: waLink
       const sum = pax.adults * selected.priceAdult + pax.children * selected.priceChild;
       const dateTxt = new Date(selected.date + 'T12:00:00').toLocaleDateString(T.locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
       summary.innerHTML =
-        `<div><span>${T.dateLabel}</span><span style="text-transform:capitalize">${dateTxt}</span></div>` +
+        `<div><span>${T.dateLabel}</span><span>${dateTxt.charAt(0).toUpperCase() + dateTxt.slice(1)}</span></div>` +
         `<div><span>${pax.adults} × ${T.adults}</span><span>${money.format(pax.adults * selected.priceAdult)}</span></div>` +
         (pax.children ? `<div><span>${pax.children} × ${T.children}</span><span>${money.format(pax.children * selected.priceChild)}</span></div>` : '') +
         `<div class="total"><span>${T.total}</span><span>${money.format(sum)}</span></div>`;
       summary.hidden = false;
       submit.disabled = false;
-      submit.textContent = `${T.pay} · ${money.format(sum)}`;
+      submit.textContent = `${T.pay} ${money.format(sum)}`;
     }
 
     grid.addEventListener('click', (e) => {

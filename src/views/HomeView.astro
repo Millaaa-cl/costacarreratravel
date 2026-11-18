@@ -22,8 +22,8 @@ const seo = es
     over={es ? 'Navega entre icebergs hasta el' : 'Sail among icebergs to the'}
     title={es ? 'Glaciar San Rafael' : 'San Rafael Glacier'}
     lead={t.hero.lead}
-    bookHref={`${routes.tour[lang]}#reservar`}
-    secondary={{ href: `${routes.tour[lang]}#itinerario`, label: t.seeItinerary }} />
+    bookHref="#reservar"
+    secondary={{ href: '#itinerario', label: t.seeItinerary }} />
   <Promo lang={lang} />
-  <Sections lang={lang} show={['trust', 'answer', 'itinerary', 'parallax', 'includes', 'gallery', 'boat', 'reviews', 'faq', 'map', 'cta']} />
+  <Sections lang={lang} withBooking show={['trust', 'answer', 'itinerary', 'parallax', 'includes', 'gallery', 'boat', 'reviews', 'faq', 'map', 'cta']} />
 </Base>

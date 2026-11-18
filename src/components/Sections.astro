@@ -8,13 +8,15 @@
  */
 import Icon from './Icon.astro';
 import Waves from './Waves.astro';
+import BookingWidget from './BookingWidget.astro';
 import { content } from '../i18n/content';
 import { routes, type Lang } from '../i18n/routes';
 import { images, business } from '../data/tour';
 
 type Block = 'trust' | 'answer' | 'itinerary' | 'includes' | 'gallery' | 'parallax' | 'boat' | 'reviews' | 'faq' | 'map' | 'cta';
-interface Props { lang: Lang; show: Block[] }
-const { lang, show } = Astro.props;
+// withBooking: muestra el widget de reserva junto al bloque "answer" (lo usa la home; la ficha del tour tiene su propio layout)
+interface Props { lang: Lang; show: Block[]; withBooking?: boolean }
+const { lang, show, withBooking = false } = Astro.props;
 const t = content[lang];
 const es = lang === 'es';
 const has = (b: Block) => show.includes(b);
@@ -33,12 +35,13 @@ const mapQ = encodeURIComponent(`${business.address.street}, ${business.address.
 
 {has('answer') && (
   <section class={bg('answer')} aria-labelledby="que-es">
-    <div class="container overview">
-      <div>
+    <div class:list={['container overview', { 'overview--booking': withBooking }]}>
+      <div class="overview__text">
         <h2 id="que-es" data-reveal="up">{t.answer.h}</h2>
         <p class="answer-box" data-reveal="up">{t.answer.p}</p>
-        <a class="btn btn--primary" href={`${routes.tour[lang]}#reservar`} data-reveal="up">{t.bookNow}</a>
+        {!withBooking && <a class="btn btn--primary" href={`${routes.tour[lang]}#reservar`} data-reveal="up">{t.bookNow}</a>}
       </div>
+      {withBooking && <BookingWidget lang={lang} />}
       <div class="collage" data-stagger>
         {images.collage.map((c) => <figure data-reveal="rise"><img src={c.src} alt={c[lang]} width={c.w} height={c.h} loading="lazy" decoding="async" /></figure>)}
       </div>
