@@ -28,8 +28,8 @@ const extra = es ? [
 const all = [...t.faq, ...extra];
 const crumbs = [{ name: es ? 'Inicio' : 'Home', path: routes.home[lang] }, { name: t.faqH, path: routes.faq[lang] }];
 const seo = es
-  ? { title: 'Preguntas frecuentes del tour Laguna San Rafael', description: `Precio (desde ${formatCLP(tour.priceFromCLP)}), duración, punto de salida, clima, qué llevar y política de cancelación del tour al Glaciar San Rafael.` }
-  : { title: 'San Rafael Lagoon tour FAQ', description: `Price (from ${formatCLP(tour.priceFromCLP)}), duration, departure point, weather, what to bring and cancellation policy for the San Rafael Glacier tour.` };
+  ? { title: 'Preguntas frecuentes del tour Laguna San Rafael', description: `Precio (${formatCLP(tour.priceFromCLP)} adulto, ${formatCLP(tour.priceChildCLP)} niño), duración, punto de salida, clima, qué llevar y política de cancelación del tour al Glaciar San Rafael.` }
+  : { title: 'San Rafael Lagoon tour FAQ', description: `Price (${formatCLP(tour.priceFromCLP)} adult, ${formatCLP(tour.priceChildCLP)} child), duration, departure point, weather, what to bring and cancellation policy for the San Rafael Glacier tour.` };
 ---
 <Base lang={lang} title={seo.title} description={seo.description} routeKey="faq" schema={[faqSchema(all), breadcrumbSchema(crumbs)]}>
   <PageHero title={t.faqH} kicker="Laguna San Rafael" lead={t.answer.p} crumbs={crumbs} />

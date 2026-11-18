@@ -13,7 +13,8 @@ export function GET() {
 
 ## Datos clave del tour
 - Nombre: Tour Full Day Laguna San Rafael
-- Precio: ${formatCLP(tour.priceFromCLP)} por persona
+- Precio adulto: ${formatCLP(tour.priceFromCLP)}
+- Precio niño (hasta ${tour.childMaxAge} años): ${formatCLP(tour.priceChildCLP)}
 - Duración: aprox. ${tour.durationHours} horas (full day): 2 h de bus por el Valle Exploradores, 2 h de navegación, 1 h frente al glaciar, 2 h de navegación de regreso y regreso por tierra
 - Salida: ${tour.departureTime} hrs desde Puerto Río Tranquilo; llegada de vuelta ${tour.returnTime.es}
 - Punto de encuentro: ${tour.meetingPoint.es}

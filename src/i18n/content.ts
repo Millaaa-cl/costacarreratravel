@@ -1,6 +1,8 @@
 import { tour, business, formatCLP } from '../data/tour';
 
 const price = formatCLP(tour.priceFromCLP);
+const priceChild = formatCLP(tour.priceChildCLP);
+const age = tour.childMaxAge;
 
 /**
  * Textos del sitio en ES y EN.
@@ -13,11 +15,20 @@ export const content = {
     langSwitch: 'English',
     skip: 'Saltar al contenido',
     from: 'desde',
-    perPerson: 'por persona',
+    perPerson: 'por adulto',
     bookNow: 'Reservar ahora',
     seeItinerary: 'Ver itinerario',
     whatsappMsg: 'Hola, quiero información sobre el tour a la Laguna San Rafael',
     whatsappLabel: 'Escríbenos por WhatsApp',
+    // Cupón de descuento (Promo.astro), debajo de la franja de datos clave
+    promo: {
+      h: '¡Tu aventura merece un descuento!',
+      lead: '¿Quieres conocer la Laguna San Rafael? ¡Tenemos un beneficio especial para ti!',
+      note: '¡No dejes pasar esta oportunidad!',
+      cta: 'Quiero mi descuento',
+      msg: 'Hola, quiero consultar por los descuentos disponibles para el tour a la Laguna San Rafael',
+      video: 'Video: grupo de pasajeros brindando en la lancha frente al Glaciar San Rafael',
+    },
     hero: {
       kicker: 'Parque Nacional Laguna San Rafael · Aysén, Patagonia',
       title: 'Navega entre icebergs hasta el Glaciar San Rafael',
@@ -31,12 +42,13 @@ export const content = {
     ],
     answer: {
       h: '¿Qué es el tour a la Laguna San Rafael?',
-      p: `Es una excursión de un día que sale a las ${tour.departureTime} desde Puerto Río Tranquilo. Cruza el Valle Exploradores en bus y navega en lancha rápida hasta el frente del Glaciar San Rafael, en el Campo de Hielo Norte. Incluye traslados, desayuno, almuerzo, snack y degustación de whisky con hielo milenario. Cuesta ${price} por persona.`,
+      p: `Es una excursión de un día que sale a las ${tour.departureTime} desde Puerto Río Tranquilo. Cruza el Valle Exploradores en bus y navega en lancha rápida hasta el frente del Glaciar San Rafael, en el Campo de Hielo Norte. Incluye traslados, desayuno, almuerzo, snack y degustación de whisky con hielo milenario. Cuesta ${price} por adulto y ${priceChild} por niño de hasta ${age} años.`,
     },
     facts: {
       h: 'El tour en datos',
       rows: [
-        ['Precio', `${price} por persona`],
+        ['Precio adulto', price],
+        ['Precio niño', `${priceChild} (hasta ${age} años)`],
         ['Duración', `Full day, aprox. ${tour.durationHours} horas`],
         ['Salida', `${tour.departureTime} hrs`],
         ['Punto de encuentro', tour.meetingPoint.es],
@@ -81,14 +93,14 @@ export const content = {
     map: { h: 'Dónde comienza el tour', p: `Punto de encuentro: ${tour.meetingPoint.es}, a las ${tour.departureTime} hrs.` },
     faqH: 'Preguntas frecuentes',
     faq: [
-      { q: '¿Cuánto cuesta el tour a la Laguna San Rafael?', a: `El tour full day cuesta ${price} por persona. Incluye traslados desde Puerto Río Tranquilo, navegación en lancha rápida, desayuno y almuerzo a bordo, snack y degustación de whisky con hielo milenario, pisco sour o jugo.` },
+      { q: '¿Cuánto cuesta el tour a la Laguna San Rafael?', a: `El tour full day cuesta ${price} por adulto y ${priceChild} por niño de hasta ${age} años. Incluye traslados desde Puerto Río Tranquilo, navegación en lancha rápida, desayuno y almuerzo a bordo, snack y degustación de whisky con hielo milenario, pisco sour o jugo.` },
       { q: '¿Desde dónde sale el tour?', a: `Sale desde Puerto Río Tranquilo, a orillas del Lago General Carrera. El bus te espera a las ${tour.departureTime} hrs en la ${tour.meetingPoint.es.charAt(0).toLowerCase() + tour.meetingPoint.es.slice(1)}.` },
       { q: '¿Cuánto dura la excursión?', a: `Es un tour de día completo de aproximadamente ${tour.durationHours} horas: unas 2 horas de bus por el Valle Exploradores en cada sentido, unas 2 horas de navegación en cada sentido y 1 hora frente al glaciar. El regreso a Puerto Río Tranquilo es ${tour.returnTime.es}.` },
       { q: '¿Qué comidas incluye?', a: 'Desayuno en el primer tramo de navegación, almuerzo al comenzar el retorno, un snack de alfajores artesanales y, frente al glaciar, degustación de whisky con hielo milenario, pisco sour o jugo.' },
       { q: '¿Cuál es la mejor época para ir?', a: `El tour opera de ${tour.season.es.toLowerCase()}. Entre diciembre y febrero hay más horas de luz y temperaturas más agradables; en primavera y otoño hay menos visitantes. En Patagonia el clima cambia rápido en cualquier mes.` },
       { q: '¿Qué pasa si hay mal tiempo?', a: 'La seguridad es lo primero. Si la Autoridad Marítima cierra el puerto o las condiciones no son seguras, reprogramamos la salida para otra fecha disponible o devolvemos el 100% del valor pagado.' },
       { q: '¿Qué debo llevar?', a: 'Ropa en capas, chaqueta impermeable, gorro, guantes, lentes de sol, protector solar, cámara y medicamento para el mareo si eres sensible. Nosotros entregamos el chaleco salvavidas.' },
-      { q: '¿Pueden ir niños?', a: 'Sí, acompañados por un adulto responsable. Escríbenos por WhatsApp para consultar por tarifas y edades.' },
+      { q: '¿Pueden ir niños?', a: `Sí, acompañados por un adulto responsable. Los niños de hasta ${age} años pagan ${priceChild}; desde los ${age + 1} años se cobra la tarifa de adulto (${price}).` },
       { q: '¿Cómo reservo y pago?', a: 'Elige la fecha en el calendario, indica el número de pasajeros y paga en línea a través de Flow (Webpay, tarjetas de crédito y débito o transferencia). Recibirás la confirmación por correo de inmediato.' },
       { q: '¿Puedo cancelar mi reserva?', a: 'Sí. Las cancelaciones hechas con anticipación tienen devolución según nuestra política. Revisa los términos y condiciones para ver los plazos.' },
     ],
@@ -99,7 +111,7 @@ export const content = {
       step2: 'Pasajeros',
       step3: 'Tus datos',
       adults: 'Adultos',
-      children: 'Niños',
+      children: `Niños (hasta ${age} años)`,
       seatsLeft: 'cupos',
       soldOut: 'Agotado',
       noDates: 'No hay salidas disponibles este mes.',
@@ -127,7 +139,7 @@ export const content = {
       weekdays: ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'],
     },
     footer: {
-      tagline: 'Excursiones a la Laguna San Rafael y al Campo de Hielo Norte, en la Región de Aysén, Patagonia chilena.',
+      tagline: 'Navegamos desde Puerto Río Tranquilo hasta el Glaciar San Rafael, en el Campo de Hielo Norte. Una aventura de día completo en la Región de Aysén, Patagonia, Chile.',
       contact: 'Contacto',
       explore: 'Explora',
       hours: `Lunes a domingo, ${business.hours} hrs`,
@@ -140,11 +152,19 @@ export const content = {
     langSwitch: 'Español',
     skip: 'Skip to content',
     from: 'from',
-    perPerson: 'per person',
+    perPerson: 'per adult',
     bookNow: 'Book now',
     seeItinerary: 'See itinerary',
     whatsappMsg: 'Hi, I would like information about the San Rafael Lagoon tour',
     whatsappLabel: 'Chat with us on WhatsApp',
+    promo: {
+      h: 'Your adventure deserves a discount!',
+      lead: 'Want to visit San Rafael Lagoon? We have a special offer for you!',
+      note: 'Don’t miss this chance!',
+      cta: 'Get my discount',
+      msg: 'Hi, I would like to ask about current discounts for the San Rafael Lagoon tour',
+      video: 'Video: a group of passengers toasting on the boat in front of the San Rafael Glacier',
+    },
     hero: {
       kicker: 'Laguna San Rafael National Park · Aysén, Patagonia',
       title: 'Sail among icebergs to the San Rafael Glacier',
@@ -158,12 +178,13 @@ export const content = {
     ],
     answer: {
       h: 'What is the San Rafael Lagoon tour?',
-      p: `It is a full-day excursion departing at ${tour.departureTime} am from Puerto Río Tranquilo. You ride through the Exploradores Valley by bus, then sail by speedboat to the front of the San Rafael Glacier, part of the Northern Patagonian Ice Field. Transfers, breakfast, lunch, a snack and a whisky tasting with ancient glacier ice are included, for ${price} per person.`,
+      p: `It is a full-day excursion departing at ${tour.departureTime} am from Puerto Río Tranquilo. You ride through the Exploradores Valley by bus, then sail by speedboat to the front of the San Rafael Glacier, part of the Northern Patagonian Ice Field. Transfers, breakfast, lunch, a snack and a whisky tasting with ancient glacier ice are included. It costs ${price} per adult and ${priceChild} per child up to ${age} years old.`,
     },
     facts: {
       h: 'Tour at a glance',
       rows: [
-        ['Price', `${price} per person`],
+        ['Adult price', price],
+        ['Child price', `${priceChild} (up to ${age} years old)`],
         ['Duration', `Full day, approx. ${tour.durationHours} hours`],
         ['Departure', `${tour.departureTime} am`],
         ['Meeting point', tour.meetingPoint.en],
@@ -208,14 +229,14 @@ export const content = {
     map: { h: 'Where the tour starts', p: `Meeting point: ${tour.meetingPoint.en}, at ${tour.departureTime} am.` },
     faqH: 'Frequently asked questions',
     faq: [
-      { q: 'How much does the San Rafael Lagoon tour cost?', a: `The full-day tour costs ${price} per person. It includes transfers from Puerto Río Tranquilo, speedboat navigation, breakfast and lunch on board, a snack and a tasting of whisky on ancient glacier ice, pisco sour or juice.` },
+      { q: 'How much does the San Rafael Lagoon tour cost?', a: `The full-day tour costs ${price} per adult and ${priceChild} per child up to ${age} years old. It includes transfers from Puerto Río Tranquilo, speedboat navigation, breakfast and lunch on board, a snack and a tasting of whisky on ancient glacier ice, pisco sour or juice.` },
       { q: 'Where does the tour depart from?', a: `It departs from Puerto Río Tranquilo, on the shore of Lake General Carrera. The bus waits for you at ${tour.departureTime} am at the ${tour.meetingPoint.en.charAt(0).toLowerCase() + tour.meetingPoint.en.slice(1)}.` },
       { q: 'How long is the excursion?', a: `It is a full-day tour of about ${tour.durationHours} hours: roughly 2 hours by bus through the Exploradores Valley each way, about 2 hours of sailing each way and 1 hour at the glacier. You are back in Puerto Río Tranquilo ${tour.returnTime.en}.` },
       { q: 'Which meals are included?', a: 'Breakfast on the first stretch of sailing, lunch as the return begins, a snack of artisanal alfajores and, at the glacier, a tasting of whisky on ancient glacier ice, pisco sour or juice.' },
       { q: 'When is the best time to go?', a: `The tour runs from ${tour.season.en}. December to February brings the longest days and mildest temperatures; spring and autumn are quieter. Patagonian weather can change quickly in any month.` },
       { q: 'What happens if the weather is bad?', a: 'Safety comes first. If the Maritime Authority closes the port or conditions are unsafe, we reschedule to another available date or refund 100% of your payment.' },
       { q: 'What should I bring?', a: 'Layered clothing, a waterproof jacket, hat, gloves, sunglasses, sunscreen, a camera and seasickness medication if you are prone to it. We provide the life vest.' },
-      { q: 'Can children join?', a: 'Yes, accompanied by a responsible adult. Message us on WhatsApp to ask about children’s rates and ages.' },
+      { q: 'Can children join?', a: `Yes, accompanied by a responsible adult. Children up to ${age} years old pay ${priceChild}; from age ${age + 1} the adult rate applies (${price}).` },
       { q: 'How do I book and pay?', a: 'Choose a date on the calendar, select the number of passengers and pay online through Flow (cards, Webpay or bank transfer). You will receive an email confirmation instantly.' },
       { q: 'Can I cancel my booking?', a: 'Yes. Cancellations made in advance are refunded according to our policy. See the terms and conditions for deadlines.' },
     ],
@@ -226,7 +247,7 @@ export const content = {
       step2: 'Passengers',
       step3: 'Your details',
       adults: 'Adults',
-      children: 'Children',
+      children: `Children (up to ${age})`,
       seatsLeft: 'seats',
       soldOut: 'Sold out',
       noDates: 'No departures available this month.',
@@ -254,7 +275,7 @@ export const content = {
       weekdays: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
     },
     footer: {
-      tagline: 'Excursions to San Rafael Lagoon and the Northern Patagonian Ice Field, Aysén Region, Chilean Patagonia.',
+      tagline: 'We sail from Puerto Río Tranquilo to the San Rafael Glacier, in the Northern Patagonian Ice Field. A full-day adventure in the Aysén Region, Patagonia, Chile.',
       contact: 'Contact',
       explore: 'Explore',
       hours: `Monday to Sunday, ${business.hours}`,

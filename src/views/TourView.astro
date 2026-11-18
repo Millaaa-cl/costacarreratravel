@@ -6,6 +6,7 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import Sections from '../components/Sections.astro';
+import Promo from '../components/Promo.astro';
 import BookingWidget from '../components/BookingWidget.astro';
 import Icon from '../components/Icon.astro';
 import { content } from '../i18n/content';
@@ -24,8 +25,8 @@ const crumbs = [
   { name, path: routes.tour[lang] },
 ];
 const seo = es
-  ? { title: 'Tour Full Day Laguna San Rafael: precio, itinerario y reservas', description: `Itinerario, precio (${price} por persona), qué incluye y fechas disponibles del tour en lancha rápida al Glaciar San Rafael. Reserva y paga online con Flow.` }
-  : { title: 'San Rafael Lagoon Full-Day Tour: price, itinerary & booking', description: `Itinerary, price (${price} per person), inclusions and available dates for the speedboat tour to the San Rafael Glacier. Book and pay online.` };
+  ? { title: 'Tour Full Day Laguna San Rafael: precio, itinerario y reservas', description: `Itinerario, precio (${price} adulto, ${formatCLP(tour.priceChildCLP)} niño), qué incluye y fechas disponibles del tour en lancha rápida al Glaciar San Rafael. Reserva y paga online con Flow.` }
+  : { title: 'San Rafael Lagoon Full-Day Tour: price, itinerary & booking', description: `Itinerary, price (${price} adult, ${formatCLP(tour.priceChildCLP)} child), inclusions and available dates for the speedboat tour to the San Rafael Glacier. Book and pay online.` };
 ---
 <Base lang={lang} title={seo.title} description={seo.description} routeKey="tour"
   schema={[...tourSchema(lang, t.answer.p, t.itinerary.steps), faqSchema(t.faq), breadcrumbSchema(crumbs)]}>
@@ -37,6 +38,7 @@ const seo = es
     crumbs={crumbs}
     bookHref="#reservar"
     secondary={{ href: '#itinerario', label: t.seeItinerary }} />
+  <Promo lang={lang} />
 
   <div class="container tour-layout">
     <div class="tour-overview">
@@ -65,7 +67,7 @@ const seo = es
                 <div>
                   <h3>{s.t}</h3>
                   <p>{s.d}</p>
-                  {im && <figure data-reveal="rise"><img src={im.src} alt={im[lang]} width={im.w} height={im.h} loading="lazy" decoding="async" /></figure>}
+                  {im && <figure data-reveal="rise"><img src={im.src} alt={im[lang]} width={im.w} height={im.h} loading="lazy" decoding="async" style={im.pos ? `object-position:${im.pos}` : undefined} /></figure>}
                 </div>
               </li>
             );

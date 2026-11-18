@@ -18,6 +18,7 @@ const i18n = { ...t, locale: lang === 'es' ? 'es-CL' : 'en-US', lang, wa: waLink
   <div class="booking__head">
     <h2 id="h-booking">{t.h}</h2>
     <p class="booking__price" style="margin:0"><strong>{formatCLP(tour.priceFromCLP)}</strong><small>{content[lang].perPerson}</small></p>
+    <p class="booking__child">{lang === 'es' ? `Niños hasta ${tour.childMaxAge} años` : `Children up to ${tour.childMaxAge}`} <strong>{formatCLP(tour.priceChildCLP)}</strong></p>
   </div>
 
   <h3><span class="n">01</span>{t.step1}</h3>

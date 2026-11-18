@@ -74,12 +74,12 @@ Edita los textos o datos y ejecuta `npm run package`. Sube el zip y extráelo so
 
 ## Pendientes de contenido (buscar `TODO` en el código)
 
-- [x] Precio ($75.000 por persona), horario de salida (06:20), punto de encuentro, itinerario y qué incluye.
+- [x] Precios ($170.000 adulto, $120.000 niño hasta 12 años), horario de salida (06:20), punto de encuentro, itinerario y qué incluye.
 - [x] Fotos propias optimizadas en `public/images/`.
-- [ ] Al crear las salidas en `/admin/`, usa **$75.000** como precio adulto. Define también la tarifa de niños: el sitio indica "consultar por WhatsApp".
+- [ ] Al crear las salidas en `/admin/`, usa **$170.000** adulto y **$120.000** niño. El formulario ya trae esos valores por defecto. Si cambian, actualiza también `tour.ts`.
 - [ ] Confirmar la temporada de operación (hoy dice "septiembre a abril").
-- [ ] **Logo en PNG transparente o SVG.** El actual es un JPEG de 200 px con fondo blanco: se ve pequeño y no se puede usar sobre fotos ni sobre fondos oscuros.
-- [ ] **Fotos para los pasos 1 y 2 del itinerario** (bus, Valle Exploradores) y, si existen, del desayuno a bordo y del puerto. Se agregan en `images.steps` de `src/data/tour.ts`.
+- [x] Logo transparente (PNG generado desde el SVG del cliente). Si existe un SVG vectorial real (exportado como vectores, no como imagen), conviene reemplazarlo: sería más liviano y nítido a cualquier tamaño.
+- [ ] **Foto para el paso 1 del itinerario** (salida en bus desde Puerto Río Tranquilo) y, si existe, del desayuno a bordo. Se agregan en `images.steps` de `src/data/tour.ts`. El paso 2 ya tiene la foto del puerto de embarque.
 - [ ] Coordenadas de la oficina, localidad exacta y redes sociales (`business.social`, para `sameAs`).
 - [ ] Historia real del equipo en *Nosotros* (E-E-A-T).
 - [ ] Política de cancelación definitiva en *Términos*.

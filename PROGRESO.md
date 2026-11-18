@@ -20,7 +20,7 @@
   - panel de administración en `/admin/` para reservas y salidas;
   - correos de confirmación.
 - **Datos reales del tour:**
-  - precio: $75.000 por persona;
+  - precios: $170.000 por adulto y $120.000 por niño de hasta 12 años (confirmados el 18-11-2026);
   - salida a las 06:20 desde la esquina de Dagoberto Godoy con Exploradores;
   - regreso entre las 17:00 y las 18:00;
   - itinerario completo;
@@ -70,17 +70,16 @@
 | Tipografía Archivo, solo fotos propias, logo JPEG actual | Supuestos por defecto, porque esas preguntas quedaron sin respuesta. |
 | Animaciones en JS propio (~5 KB), sin GSAP ni AOS | Menos peso. Todo respeta `prefers-reduced-motion` y el contenido se ve sin JS. |
 | Descartados: cursor personalizado, partículas y video en autoplay | Afectan el rendimiento y la accesibilidad. |
-| Header siempre blanco | El logo JPEG tiene fondo blanco. |
+| Header siempre blanco | Las letras del logo son negras y no se leerían sobre la foto del hero. |
 | Zip con `tar -a` en vez de Compress-Archive | Compress-Archive usa `\` en las rutas y rompe la extracción en cPanel. |
 | `.gitignore` excluye `config.php` y `tsr-config.php` | Esos archivos guardan claves de la base y de Flow, y no deben ir a GitHub. |
 
 ## Pendiente
 
 ### Contenido (lo entrega el cliente; buscar `TODO` en el código)
-- [ ] Tarifa de niños. Hoy dice "consultar por WhatsApp".
 - [ ] Confirmar la temporada de operación. Hoy dice "septiembre a abril".
 - [ ] Confirmar si se cobra la entrada a CONAF y si hay guía en inglés.
-- [ ] **Logo en PNG transparente o SVG.** El actual es un JPEG de 200 px con fondo blanco.
+- [x] Logo transparente, recibido el 18-11-2026 (PNG generado desde el SVG del cliente).
 - [ ] Fotos de los pasos 1 y 2 del itinerario (bus, Valle Exploradores) y, si hay, del desayuno a bordo.
 - [ ] Coordenadas de la oficina, redes sociales y razón social.
 - [ ] Historia real del equipo en *Nosotros*.
@@ -94,7 +93,7 @@
 - [ ] Subir `travelsanrafael-public_html.zip` a `public_html` y extraerlo.
 - [ ] Elegir PHP 8.1 o superior, con `pdo_mysql` y `curl`.
 - [ ] Crear el administrador en `/admin/setup.php` y luego **borrar ese archivo**.
-- [ ] Crear las salidas de la temporada en `/admin/`: 20 cupos, $75.000.
+- [ ] Crear las salidas de la temporada en `/admin/`: 20 cupos, $170.000 adulto y $120.000 niño.
 - [ ] Probar en el sandbox de Flow un pago aprobado, uno rechazado y uno abandonado.
 - [ ] Pasar Flow a producción y hacer una compra real de bajo monto.
 - [ ] Search Console y Bing: enviar `sitemap-index.xml`.
@@ -111,7 +110,7 @@
 
 **Instalar el sitio en el hosting y probar una reserva en el sandbox de Flow**, siguiendo los pasos de "Puesta en marcha en cPanel" del README. Es lo único que falta para que los días del calendario se puedan seleccionar y para confirmar que el pago, los correos y el panel funcionan de punta a punta.
 
-Mientras tanto, conviene pedir al cliente el logo en PNG o SVG, la tarifa de niños y la temporada confirmada.
+Mientras tanto, conviene pedir al cliente la temporada confirmada.
 
 ## Cómo retomar
 

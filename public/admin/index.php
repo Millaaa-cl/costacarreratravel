@@ -149,8 +149,8 @@ if ($p === 'departures') {
                 <label>Desde <input type="date" name="from" required></label>
                 <label>Hasta <input type="date" name="to" required></label>
                 <label>Capacidad <input type="number" name="capacity" value="20" min="1" required></label>
-                <label>Precio adulto (CLP) <input type="number" name="price_adult" min="0" step="1000" required></label>
-                <label>Precio niño (CLP) <input type="number" name="price_child" min="0" step="1000" required></label>
+                <label>Precio adulto (CLP) <input type="number" name="price_adult" value="170000" min="0" step="1000" required></label>
+                <label>Precio niño hasta 12 años (CLP) <input type="number" name="price_child" value="120000" min="0" step="1000" required></label>
                 <fieldset><legend>Días de salida</legend>
                     <?php foreach ([1 => 'Lu', 2 => 'Ma', 3 => 'Mi', 4 => 'Ju', 5 => 'Vi', 6 => 'Sá', 7 => 'Do'] as $n => $l): ?>
                         <label class="inline"><input type="checkbox" name="days[]" value="<?= $n ?>" checked> <?= $l ?></label>

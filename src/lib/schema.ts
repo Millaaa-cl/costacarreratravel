@@ -1,5 +1,5 @@
 /** Generadores de datos estructurados JSON-LD (schema.org) para SEO, GEO y AEO. */
-import { business, tour } from '../data/tour';
+import { business, tour, logo } from '../data/tour';
 import type { Lang } from '../i18n/routes';
 import { routes } from '../i18n/routes';
 
@@ -17,7 +17,7 @@ export function organizationSchema() {
     name: business.name,
     legalName: business.legalName,
     url: site,
-    logo: abs('/favicon.svg'),
+    logo: abs(logo.large), // Google recomienda un logo raster (PNG) de al menos 112×112 px
     image: abs('/images/og-laguna-san-rafael.jpg'),
     email: business.email,
     telephone: business.phones[0],
@@ -56,15 +56,23 @@ export function websiteSchema(lang: Lang) {
 export function tourSchema(lang: Lang, description: string, itinerary: { t: string; d: string }[]) {
   const name = lang === 'es' ? 'Tour Full Day Laguna San Rafael' : 'San Rafael Lagoon Full-Day Tour';
   const url = abs(routes.tour[lang]);
-  const offer = {
+  const base = {
     '@type': 'Offer',
-    price: tour.priceFromCLP,
     priceCurrency: tour.currency,
     availability: 'https://schema.org/InStock',
     url: `${url}#reservar`,
     validFrom: '2026-01-01',
     seller: { '@id': orgId },
   };
+  // Dos tarifas: adulto y niño (hasta childMaxAge años)
+  const offer = [
+    { ...base, name: lang === 'es' ? 'Adulto' : 'Adult', price: tour.priceFromCLP },
+    {
+      ...base,
+      name: lang === 'es' ? `Niño (hasta ${tour.childMaxAge} años)` : `Child (up to ${tour.childMaxAge} years)`,
+      price: tour.priceChildCLP,
+    },
+  ];
   return [
     {
       '@context': 'https://schema.org',

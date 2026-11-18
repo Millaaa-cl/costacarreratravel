@@ -32,7 +32,9 @@ export const business = {
 };
 
 export const tour = {
-  priceFromCLP: 75000,      // precio por persona (CLP)
+  priceFromCLP: 170000,     // precio adulto (CLP). El cobro real sale de la tabla departures (/admin/)
+  priceChildCLP: 120000,    // precio niño (CLP)
+  childMaxAge: 12,          // niños hasta 12 años inclusive
   currency: 'CLP',
   durationHours: 11,        // 06:20 → llegada entre 17:00 y 18:00
   capacity: 20,
@@ -52,9 +54,12 @@ export const waLink = (text: string) =>
   `https://wa.me/${business.whatsapp}?text=${encodeURIComponent(text)}`;
 
 /** Imágenes (fotos propias, optimizadas). Para cambiar una foto, reemplaza el archivo con el mismo nombre. */
-type Img = { src: string; w: number; h: number; es: string; en: string };
+/** pos: punto de enfoque del recorte (object-position), útil para fotos verticales en espacios horizontales. */
+type Img = { src: string; w: number; h: number; es: string; en: string; pos?: string };
 const img = (src: string, w: number, h: number, es: string, en: string): Img => ({ src: `/images/${src}`, w, h, es, en });
-export const logo = { src: '/images/logo-costa-carrera-travel.jpg', w: 200, h: 154 };
+// Logo PNG transparente, generado desde el SVG del cliente (que en realidad es un PNG 960×740 embebido):
+// 239×186 = 3× del alto en el header. La versión -600.png se usa en los datos estructurados.
+export const logo = { src: '/images/logo-costa-carrera-travel.png', w: 239, h: 186, large: '/images/logo-costa-carrera-travel-600.png' };
 export const images: {
   hero: Img; heroMobile: Img; boat: Img; boatShore: Img; gallery: Img[];
   collage: Img[]; steps: (Img | null)[]; includes: Img; parallax: Img; reviews: Img; faq: Img; map: Img; cta: Img;
@@ -68,12 +73,9 @@ export const images: {
     src: '/images/laguna-san-rafael-brindis-frente-al-glaciar-movil.jpg', w: 900, h: 1100,
     es: '', en: '',
   },
-  boat: {
-    src: '/images/lancha-rapida-frente-glaciar-san-rafael.jpg', w: 1000, h: 1000,
-    es: 'Lancha rápida con pasajeros frente al Glaciar San Rafael',
-    en: 'Speedboat with passengers in front of the San Rafael Glacier',
-  },
+  boat: img('lancha-pasajeros-glaciar-san-rafael-cielo-azul.jpg', 720, 1280, 'Nuestra lancha con pasajeros frente al Glaciar San Rafael en un día despejado', 'Our boat with passengers in front of the San Rafael Glacier on a clear day'),
   gallery: [
+    img('capitan-lancha-entre-hielos-glaciar-san-rafael.jpg', 1280, 853, 'El capitán saluda desde la lancha entre los hielos del Glaciar San Rafael', 'The captain waves from the boat among the ice of the San Rafael Glacier'),
     { src: '/images/glaciar-san-rafael-pared-de-hielo.jpg', w: 1000, h: 1000, es: 'Pared de hielo del Glaciar San Rafael', en: 'Ice wall of the San Rafael Glacier' },
     { src: '/images/icebergs-frente-glaciar-san-rafael.jpg', w: 1000, h: 1000, es: 'Témpanos frente al Glaciar San Rafael', en: 'Icebergs in front of the San Rafael Glacier' },
     { src: '/images/foca-sobre-tempano-laguna-san-rafael.jpg', w: 1000, h: 1000, es: 'Foca descansando sobre un témpano en la Laguna San Rafael', en: 'Seal resting on an ice floe in San Rafael Lagoon' },
@@ -82,30 +84,38 @@ export const images: {
     { src: '/images/degustacion-whisky-hielo-milenario.jpg', w: 960, h: 1280, es: 'Degustación de whisky y pisco con hielo milenario a bordo', en: 'Whisky and pisco tasting with ancient glacier ice on board' },
     { src: '/images/laguna-san-rafael-foca-y-glaciar.jpg', w: 1000, h: 1000, es: 'Laguna San Rafael con el glaciar al fondo', en: 'San Rafael Lagoon with the glacier in the background' },
     { src: '/images/pasajeros-brindis-hielo-milenario.jpg', w: 1000, h: 1000, es: 'Brindis frente al glaciar en la proa de la lancha', en: 'Toast in front of the glacier on the bow of the boat' },
-    { src: '/images/lancha-rapida-en-la-orilla.jpg', w: 1000, h: 1000, es: 'Nuestra lancha rápida en la orilla', en: 'Our speedboat moored at the shore' },
     { src: '/images/iceberg-detalle-laguna-san-rafael.jpg', w: 1000, h: 1000, es: 'Detalle de un iceberg en la Laguna San Rafael', en: 'Close-up of an iceberg in San Rafael Lagoon' },
     { src: '/images/foca-frente-glaciar-san-rafael.jpg', w: 1000, h: 1000, es: 'Foca sobre el hielo frente al Glaciar San Rafael', en: 'Seal on the ice in front of the San Rafael Glacier' },
     { src: '/images/frente-glaciar-san-rafael-montana.jpg', w: 1000, h: 1000, es: 'Frente del Glaciar San Rafael entre montañas', en: 'San Rafael Glacier front between mountains' },
+    img('foca-descansando-sobre-hielo-laguna-san-rafael.jpg', 1280, 853, 'Foca descansando sobre el hielo en la Laguna San Rafael', 'Seal resting on the ice in San Rafael Lagoon'),
+    { ...img('lancha-bajo-pared-glaciar-san-rafael.jpg', 720, 1280, 'La lancha se ve diminuta bajo la pared del Glaciar San Rafael', 'The boat looks tiny below the ice wall of the San Rafael Glacier'), pos: '50% 78%' },
+    { ...img('grupo-brindando-lancha-frente-glaciar-san-rafael.jpg', 900, 1200, 'Grupo de pasajeros brindando en la lancha frente al Glaciar San Rafael', 'A group of passengers toasting on the boat in front of the San Rafael Glacier'), pos: '50% 62%' },
+    img('lancha-navegando-entre-hielos-laguna-san-rafael.jpg', 1200, 675, 'Lancha navegando entre hielos flotantes en la Laguna San Rafael', 'Boat sailing through floating ice in San Rafael Lagoon'),
+    { ...img('pasajeros-mirando-glaciar-desde-la-proa.jpg', 900, 1200, 'Pasajeros mirando el glaciar desde la proa de la lancha', 'Passengers watching the glacier from the bow of the boat'), pos: '50% 40%' },
+    img('glaciar-san-rafael-reflejo-en-la-laguna.jpg', 1200, 900, 'El Glaciar San Rafael reflejado en la laguna', 'The San Rafael Glacier reflected in the lagoon'),
+    { ...img('iceberg-azul-intenso-laguna-san-rafael.jpg', 900, 1200, 'Iceberg de un azul intenso en la Laguna San Rafael', 'Deep blue iceberg in San Rafael Lagoon'), pos: '50% 22%' },
+    { ...img('lancha-entre-tempanos-glaciar-san-rafael.jpg', 720, 1280, 'Lancha navegando entre témpanos frente al glaciar', 'Boat sailing among ice floes in front of the glacier'), pos: '50% 55%' },
+    { ...img('hielos-flotantes-frente-glaciar-san-rafael.jpg', 900, 1200, 'Hielos flotantes frente al Glaciar San Rafael', 'Floating ice in front of the San Rafael Glacier'), pos: '50% 35%' },
   ],
-  boatShore: img('lancha-rapida-en-la-orilla.jpg', 1000, 1000, 'Nuestra lancha rápida en la orilla', 'Our speedboat moored at the shore'),
+  boatShore: img('interior-cabina-lancha-chalecos-salvavidas.jpg', 900, 1200, 'Cabina cerrada de la lancha, con asientos y chalecos salvavidas para cada pasajero', 'Enclosed boat cabin with seats and a life jacket for every passenger'),
   collage: [
-    img('iceberg-vertical-laguna-san-rafael.jpg', 1000, 1679, 'Iceberg azul en la Laguna San Rafael', 'Blue iceberg in San Rafael Lagoon'),
+    img('lancha-frente-glaciar-san-rafael-dia-soleado.jpg', 720, 1280, 'Nuestra lancha frente al hielo azul del Glaciar San Rafael', 'Our boat in front of the blue ice of the San Rafael Glacier'),
     img('degustacion-whisky-hielo-milenario.jpg', 960, 1280, 'Whisky y pisco con hielo milenario a bordo', 'Whisky and pisco with ancient glacier ice on board'),
     img('lancha-rapida-frente-glaciar-san-rafael.jpg', 1000, 1000, 'Lancha rápida con pasajeros frente al glaciar', 'Speedboat with passengers in front of the glacier'),
   ],
   // Una foto por paso del itinerario (null = sin foto real todavía)
   steps: [
     null,
-    null,
-    img('icebergs-cielo-laguna-san-rafael.jpg', 988, 659, 'Navegando entre icebergs hacia la laguna', 'Sailing among icebergs toward the lagoon'),
-    img('frente-glaciar-san-rafael-montana.jpg', 1000, 1000, 'Frente del Glaciar San Rafael', 'San Rafael Glacier front'),
-    img('iceberg-azul-laguna-san-rafael.jpg', 1000, 1000, 'Iceberg azul en el camino de regreso', 'Blue iceberg on the way back'),
+    { ...img('lanchas-en-el-puerto-de-embarque.jpg', 576, 1280, 'Nuestras lanchas esperando en el puerto de embarque', 'Our boats waiting at the departure pier'), pos: '50% 46%' },
+    img('llegada-a-la-laguna-san-rafael-glaciar-al-fondo.jpg', 1200, 900, 'Llegando a la Laguna San Rafael, con el glaciar al fondo', 'Arriving at San Rafael Lagoon, with the glacier ahead'),
+    img('capitan-lancha-entre-hielos-glaciar-san-rafael.jpg', 1280, 853, 'Una hora frente al Glaciar San Rafael', 'One hour in front of the San Rafael Glacier'),
+    img('lancha-entre-hielos-frente-glaciar-san-rafael.jpg', 1200, 675, 'La lancha emprende el regreso entre los hielos', 'The boat heads back through the ice'),
     null,
   ],
   includes: img('pasajeros-brindis-hielo-milenario.jpg', 1000, 1000, 'Brindis con hielo milenario incluido en el tour', 'Toast with ancient glacier ice, included in the tour'),
-  parallax: img('glaciar-san-rafael-pared-de-hielo.jpg', 1000, 1000, 'Pared de hielo del Glaciar San Rafael', 'Ice wall of the San Rafael Glacier'),
-  reviews: img('pasajeros-fotografiando-glaciar-san-rafael.jpg', 963, 720, 'Pasajeros fotografiando el glaciar', 'Passengers photographing the glacier'),
-  faq: img('foca-frente-glaciar-san-rafael.jpg', 1000, 1000, 'Foca descansando frente al glaciar', 'Seal resting in front of the glacier'),
+  parallax: img('panoramica-glaciar-san-rafael-reflejo.jpg', 1600, 900, 'Panorámica del Glaciar San Rafael reflejado en la laguna', 'Panoramic view of the San Rafael Glacier reflected in the lagoon'),
+  reviews: img('guia-saludando-desde-la-lancha-glaciar.jpg', 1280, 853, 'Nuestro guía saluda junto a los pasajeros frente al glaciar', 'Our guide waves with passengers in front of the glacier'),
+  faq: img('pasajeros-con-bandera-chilena-frente-al-glaciar.jpg', 1200, 900, 'Pasajeros con la bandera chilena frente al Glaciar San Rafael', 'Passengers holding the Chilean flag in front of the San Rafael Glacier'),
   map: img('lancha-rapida-en-la-orilla.jpg', 1000, 1000, 'Lancha lista para zarpar', 'Boat ready to sail'),
-  cta: img('icebergs-cielo-laguna-san-rafael.jpg', 988, 659, 'Icebergs en la Laguna San Rafael', 'Icebergs in San Rafael Lagoon'),
+  cta: img('tempano-frente-glaciar-san-rafael.jpg', 1600, 1200, 'Témpano frente al Glaciar San Rafael', 'Ice floe in front of the San Rafael Glacier'),
 };

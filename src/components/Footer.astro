@@ -7,6 +7,13 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = content[lang];
 const year = new Date().getFullYear();
+const es = lang === 'es';
+// Sellos oficiales del cliente (PNG 150×150 con fondo transparente)
+const badges = [
+  { src: '/images/certificaciones/sello-confianza-turistica-sernatur.png', alt: es ? 'Sello Confianza Turística: compromiso con los protocolos COVID-19' : 'Confianza Turística seal: commitment to COVID-19 protocols' },
+  { src: '/images/certificaciones/sello-turismo-sustentable-sernatur.png', alt: es ? 'Sello Turismo Sustentable: compromiso con las buenas prácticas' : 'Sustainable Tourism seal: commitment to good practices' },
+  { src: '/images/certificaciones/servicio-turistico-registrado-sernatur.png', alt: es ? 'Servicio Turístico Registrado en SERNATUR' : 'Tourism service registered with SERNATUR' },
+];
 ---
 <footer class="site-footer">
   <div class="container">
@@ -14,6 +21,10 @@ const year = new Date().getFullYear();
       <div>
         <p class="footer-brand">Costa Carrera <span>Travel</span></p>
         <p style="max-width:40ch">{t.footer.tagline}</p>
+        <h2 class="footer-badges-title">{es ? 'Certificaciones' : 'Certifications'}</h2>
+        <ul class="footer-badges">
+          {badges.map((b) => <li><img src={b.src} alt={b.alt} title={b.alt} width="150" height="150" loading="lazy" decoding="async" /></li>)}
+        </ul>
       </div>
       <div>
         <h2>{t.footer.explore}</h2>

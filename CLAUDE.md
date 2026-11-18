@@ -38,11 +38,12 @@ Hay dos mitades que solo se comunican por HTTP:
 - `src/layouts/Base.astro` arma todo el `<head>` SEO: canonical, hreflang, OG, geo meta, y siempre el JSON-LD de Organization y WebSite más el `schema` que pase cada página. La marca se agrega al título solo si cabe (42 caracteres o menos).
 - `src/components/Sections.astro` contiene todas las secciones del tour en un solo componente, controladas por `show={[...]}`. Lo comparten la home y la ficha del tour. El fondo blanco o gris de cada sección se alterna solo según el orden de `show` (función `bg()`), así que no hay que poner `section--ice` a mano.
 - La ficha del tour (`TourView.astro`) tiene su propio layout: hero fotográfico, franja `.keyfacts` y una grilla `.tour-layout` con áreas `overview / booking / details`. El widget queda sticky en la columna derecha en pantallas de 1040 px o más. En móvil, el orden del DOM lo ubica justo después del resumen.
-- **Marca: Costa Carrera Travel** (`business.name`). El logo está en `public/images/logo-costa-carrera-travel.jpg`: es un JPEG de 200 px con fondo blanco, por eso el header siempre es blanco.
+- **Marca: Costa Carrera Travel** (`business.name`). El logo está en `public/images/logo-costa-carrera-travel.png` (PNG transparente de 239×186, 3× del alto en el header) y en `-600.png` (para JSON-LD). Ambos se generaron desde el SVG del cliente (`C:\Users\holam\Downloads\logo-costa-carrera-travel.svg`), que no es vectorial: es un PNG de 960×740 embebido con máscara y pesa 466 KB, por eso no se usa directo. Las letras del logo son negras, así que va sobre fondos claros (el header sigue blanco).
 - **Sistema de diseño "Ola y glaciar"** (`global.css`). Sigue la skill `frontend-design`: sin etiquetas en MAYÚSCULAS sobre los títulos, sin "·" en textos, sin "→" en botones y sin emojis como íconos.
   - **Paleta del logo:** `--ink` #1d1d1b, `--red` #d7262b (solo para la acción de reservar), `--teal` #2fb3c3 y `--teal-deep` #137f8c (texto), `--ice` #eaf6f8.
   - **Tipografía:** una sola familia, **Archivo** variable, con títulos en `wdth 62` y peso 800 y texto en `wdth 100`.
   - **Firma visual:** las olas del logo animadas (`Waves.astro`, prop `to` = color de la sección siguiente). El número de crestas debe ser par para que el bucle sea continuo.
+- `Promo.astro` es el cupón de descuento que va justo después del hero (y de su franja `.keyfacts`) en la home y la ficha del tour. Sus textos están en `content.ts` → `promo`, y el botón abre WhatsApp con `promo.msg`. Por pedido del cliente, el cupón es azul `#408dde`, con el botón verde `#9fed8b` latiendo y un 🎁 que se sacude. A la izquierda tiene un video en bucle sin sonido (`public/videos/costa-carrera-travel-descuento.mp4`, 480×640, con portada `-poster.jpg`), que se pausa fuera de pantalla y con "reducir movimiento".
 - `Hero.astro` es el hero compartido entre la home y el tour. El H1 se forma con `over` + `title`, e incluye la franja `.keyfacts` con contadores.
 - **Movimiento:** todo está en `src/scripts/motion.ts`, que se carga en `Base.astro`.
   - Atributos: `[data-reveal="up|rise|side"]`, `[data-stagger]`, `[data-checks]`, `[data-count]`, `.route` (scroll → `--p` y `li.is-active`), `[data-parallax]`, `[data-lightbox]` (un `<dialog class="lightbox">` en Base), `[data-carousel]` y `.faq__body`.
@@ -73,12 +74,16 @@ Hay dos mitades que solo se comunican por HTTP:
 
 ## Datos del tour (confirmados por el cliente)
 
-- **Precio:** $75.000 CLP por persona.
+- **Precios:** $170.000 CLP por adulto y $120.000 CLP por niño de hasta 12 años (`priceFromCLP`, `priceChildCLP` y `childMaxAge` en `tour.ts`). El sitio dice "por adulto", no "por persona".
 - **Horario:** salida a las 06:20 desde la esquina de Dagoberto Godoy con Exploradores (Puerto Río Tranquilo); regreso entre las 17:00 y las 18:00.
 - **Itinerario:** 2 h de bus, 2 h de navegación con desayuno, 1 h frente al glaciar con degustación de whisky con hielo milenario, pisco sour o jugo, almuerzo y navegación de retorno con snack de alfajores, y regreso por tierra.
 
-Los valores que quedan pendientes están marcados con `TODO` en el código: tarifa de niños, temporada, entrada a CONAF, coordenadas, redes sociales y razón social.
+Los valores que quedan pendientes están marcados con `TODO` en el código: temporada, entrada a CONAF, coordenadas, redes sociales y razón social.
 
 ## Imágenes
 
-Las fotos fuente del cliente están en `C:\Users\holam\Desktop\imagenes`. Las versiones optimizadas están en `public/images/`, en JPG con nombres descriptivos para SEO. El hero tiene una versión de escritorio de 1920×1080 y una para móvil de 900×1100, servidas con `<picture>`. Al reemplazar una imagen, actualiza también `w`/`h` y los textos alt en `tour.ts`.
+Las fotos fuente del cliente están en `C:\Users\holam\Desktop\imagenes` y `C:\Users\holam\Desktop\nuevas imagenes` (esta última son fotos de WhatsApp de 1280 px, copiadas sin recomprimir). Las versiones optimizadas están en `public/images/`, en JPG con nombres descriptivos para SEO. El hero tiene una versión de escritorio de 1920×1080 y una para móvil de 900×1100, servidas con `<picture>`. Al reemplazar una imagen, actualiza también `w`/`h` y los textos alt en `tour.ts`.
+
+- Usa fotos verticales en los espacios verticales (collage, embarcación, FAQ, reseñas) y horizontales en los pasos del itinerario y en el mapa.
+- Si una foto vertical cae en un espacio horizontal (por ejemplo, en la galería), agrega `pos` (object-position, como `'50% 78%'`) para que el recorte muestre lo importante. Hoy solo la galería lee `pos`.
+- La galería debe tener 3n + 3 fotos (12, 15, 18…) para que la grilla quede completa en escritorio y en móvil.

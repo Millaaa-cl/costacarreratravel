@@ -62,7 +62,7 @@ const mapQ = encodeURIComponent(`${business.address.street}, ${business.address.
               <div>
                 <h3>{s.t}</h3>
                 <p>{s.d}</p>
-                {im && <figure data-reveal="rise"><img src={im.src} alt={im[lang]} width={im.w} height={im.h} loading="lazy" decoding="async" /></figure>}
+                {im && <figure data-reveal="rise"><img src={im.src} alt={im[lang]} width={im.w} height={im.h} loading="lazy" decoding="async" style={im.pos ? `object-position:${im.pos}` : undefined} /></figure>}
               </div>
             </li>
           );
@@ -111,7 +111,7 @@ const mapQ = encodeURIComponent(`${business.address.street}, ${business.address.
         {images.gallery.map((g) => (
           <figure data-reveal="rise">
             <button type="button" data-lightbox={g.src} data-alt={g[lang]} aria-label={(es ? 'Ampliar: ' : 'Enlarge: ') + g[lang]}>
-              <img src={g.src} alt={g[lang]} width={g.w} height={g.h} loading="lazy" decoding="async" />
+              <img src={g.src} alt={g[lang]} width={g.w} height={g.h} loading="lazy" decoding="async" style={g.pos ? `object-position:${g.pos}` : undefined} />
             </button>
             <figcaption>{g[lang]}</figcaption>
           </figure>

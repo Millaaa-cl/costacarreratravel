@@ -1,0 +1,46 @@
+---
+/**
+ * Cupón de descuento: va justo debajo de la franja .keyfacts (home y ficha del tour).
+ * Forma de cupón (muescas laterales + línea punteada) porque es lo que es: un descuento.
+ * El botón abre WhatsApp con un mensaje ya escrito. Turquesa, no rojo: el rojo es solo para reservar.
+ */
+import Icon from './Icon.astro';
+import { content } from '../i18n/content';
+import type { Lang } from '../i18n/routes';
+import { waLink } from '../data/tour';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = content[lang].promo;
+---
+<section class="promo" aria-labelledby="h-promo">
+  <div class="container">
+    <div class="promo__ticket" data-reveal="up">
+      <div class="promo__media">
+        <video src="/videos/costa-carrera-travel-descuento.mp4" poster="/videos/costa-carrera-travel-descuento-poster.jpg"
+          width="480" height="640" autoplay muted loop playsinline preload="metadata" aria-label={t.video} data-promo-video></video>
+      </div>
+      <div class="promo__body">
+        <h2 id="h-promo">{t.h} <span class="promo__emoji" aria-hidden="true">🎁</span></h2>
+        <p class="promo__lead">{t.lead}</p>
+      </div>
+      <div class="promo__action">
+        <p class="promo__note">{t.note}</p>
+        <a class="btn btn--wa" href={waLink(t.msg)} target="_blank" rel="noopener"><Icon name="whatsapp" />{t.cta}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // El video se reproduce solo, sin sonido y en bucle. Con "reducir movimiento" queda detenido en la portada,
+  // y se pausa cuando sale de la pantalla para no gastar batería.
+  const v = document.querySelector<HTMLVideoElement>('[data-promo-video]');
+  if (v) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { v.removeAttribute('autoplay'); v.pause(); }
+    else if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause(); }).observe(v);
+    }
+  }
+</script>
