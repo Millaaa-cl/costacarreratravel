@@ -1,11 +1,11 @@
 # Progreso del proyecto: Costa Carrera Travel (travelsanrafael.cl)
 
-Última actualización: 17 de noviembre de 2026
+Última actualización: 18 de noviembre de 2026
 
-## Qué hicimos hoy
+## 17 de noviembre: sitio nuevo y rediseño
 
 ### 1. Sitio nuevo completo
-- Sitio estático en **Astro**, bilingüe: español en `/`, inglés en `/en/`. Tiene 27 páginas:
+- Sitio estático en **Astro**, bilingüe: español en `/` e inglés en `/en/`, con 27 páginas:
   - inicio y ficha del tour;
   - cómo llegar, preguntas frecuentes, nosotros, contacto y términos;
   - 3 artículos de blog por idioma;
@@ -16,11 +16,10 @@
   - redirecciones 301 desde las URLs del WordPress antiguo.
 - **Reservas en línea:**
   - calendario con cupos reales y pago con **Flow.cl**;
-  - backend PHP + MySQL que corre en el mismo hosting cPanel;
-  - panel de administración en `/admin/` para reservas y salidas;
+  - backend PHP + MySQL en el mismo hosting cPanel;
+  - panel `/admin/` para reservas y salidas;
   - correos de confirmación.
 - **Datos reales del tour:**
-  - precios: $170.000 por adulto y $120.000 por niño de hasta 12 años (confirmados el 18-11-2026);
   - salida a las 06:20 desde la esquina de Dagoberto Godoy con Exploradores;
   - regreso entre las 17:00 y las 18:00;
   - itinerario completo;
@@ -32,7 +31,7 @@
 - **Paleta del logo:**
   - negro `#1d1d1b`;
   - rojo `#d7262b`, solo para reservar;
-  - turquesa `#2fb3c3` / `#137f8c`;
+  - turquesa `#2fb3c3` y `#137f8c`;
   - hielo `#eaf6f8`.
 - **Tipografía:** Archivo, con títulos condensados que recuerdan al "TRAVEL" del logo.
 - **Interacción propia en cada sección:**
@@ -45,17 +44,70 @@
   - carrusel de reseñas;
   - FAQ animadas;
   - barra de reserva en móvil.
-- **Fotos** en cada bloque: resumen, itinerario, incluye, embarcación, reseñas, FAQ, mapa y cierre.
 
 ### 3. Correcciones
-- **Collage y fotos que no aparecían:** el efecto de revelado (`clip-path` al 100 %) impedía que el navegador las detectara y las cargara. Se cambió por un fundido con zoom.
-- **Calendario vacío en "Elige la fecha":** ahora siempre se dibuja el mes, aunque el backend no responda, y muestra el aviso con el enlace a WhatsApp. El nombre del mes queda como "Noviembre de 2026".
-- **Íconos descuadrados en Contacto:** no tenían tamaño definido. Ahora van en círculos de 44 px, y todos los íconos del sitio tienen un tamaño base de 24 px.
+- **Collage y fotos que no aparecían:** el revelado con `clip-path` al 100 % impedía que el navegador las detectara y cargara. Se cambió por un fundido con zoom.
+- **Calendario vacío en "Elige la fecha":** ahora siempre se dibuja el mes, con el aviso y el enlace a WhatsApp si el backend no responde.
+- **Íconos descuadrados en Contacto:** ahora van en círculos de 44 px, y todos los íconos tienen un tamaño base de 24 px.
 
 ### 4. Control de versiones
-- Se instaló Git y se inicializó el repositorio.
-- Primer commit: `6ba85a2`.
-- Subido a GitHub en https://github.com/Millaaa-cl/costacarreratravel, rama `main`.
+- Se instaló Git y se subió a GitHub: https://github.com/Millaaa-cl/costacarreratravel (rama `main`).
+- Commits: `6ba85a2` (sitio) y `5cd5ff1` (este archivo).
+
+## 18 de noviembre: tarifas, logo, cupón de descuento y fotos
+
+Commit `363e6d5`.
+
+### 1. Tarifas definitivas
+- **$170.000 por adulto y $120.000 por niño de hasta 12 años.** Están en `tour.ts`: `priceFromCLP`, `priceChildCLP` y `childMaxAge`.
+- El sitio ahora dice **"por adulto"** en lugar de "por persona" en el hero, el widget, los datos clave y la barra móvil.
+- El widget muestra una franja con la tarifa de niños.
+- **Textos actualizados en ES y EN:**
+  - el resumen;
+  - la tabla de información práctica;
+  - las FAQ "¿Cuánto cuesta?" y "¿Pueden ir niños?", que antes decía "consultar por WhatsApp";
+  - las meta descriptions;
+  - `llms.txt`.
+- **JSON-LD con dos ofertas:** Adulto y Niño.
+- **Panel `/admin/`:** el formulario de salidas en lote trae 170.000 y 120.000 por defecto.
+
+### 2. Logo transparente
+- El SVG del cliente no es vectorial: es un PNG de 960×740 embebido con una máscara y pesa 466 KB.
+- Se convirtió a PNG transparente recortado, en dos versiones:
+  - `logo-costa-carrera-travel.png` (239×186, 42 KB) para el header;
+  - `-600.png` para el JSON-LD. Antes Google recibía el favicon como logo.
+
+### 3. Cupón de descuento (`Promo.astro`)
+- Va justo después de la franja de datos clave, en el inicio y en la ficha del tour.
+- **Diseño:**
+  - tarjeta azul `#408dde` con forma de cupón, con línea punteada y muescas;
+  - título "¡Tu aventura merece un descuento! 🎁".
+- **Botón "Quiero mi descuento":**
+  - verde `#9fed8b` y late con un halo;
+  - abre WhatsApp con un mensaje ya escrito para consultar descuentos.
+- **Animaciones:**
+  - el regalo se sacude;
+  - un brillo cruza la tarjeta.
+- **Video:**
+  - en bucle, sin sonido, del grupo brindando frente al glaciar (`public/videos/`, 354 KB, con portada);
+  - se pausa fuera de la pantalla y con "reducir movimiento".
+
+### 4. Fotos nuevas (20)
+- **Collage:** nueva foto principal, la lancha frente al hielo azul.
+- **Itinerario:**
+  - el paso 2 ahora tiene foto, el puerto de embarque;
+  - fotos nuevas en los pasos 3, 4 y 5.
+- **Nuestra embarcación:** la lancha con pasajeros y el interior de la cabina con los chalecos de la marca.
+- **Otras secciones:**
+  - reseñas: el guía saludando;
+  - FAQ: pasajeros con la bandera chilena;
+  - banda de la frase: la panorámica del glaciar;
+  - cierre: témpano frente al glaciar.
+- **Galería:** pasó de 12 a 21 fotos. Las fotos verticales tienen punto de enfoque (`pos`) para que el recorte muestre lo importante.
+
+### 5. Footer
+- Sellos de certificación: **Confianza Turística**, **Turismo Sustentable** y **Servicio Turístico Registrado SERNATUR**.
+- Descripción nueva que menciona Chile: "Navegamos desde Puerto Río Tranquilo hasta el Glaciar San Rafael, en el Campo de Hielo Norte. Una aventura de día completo en la Región de Aysén, Patagonia, Chile."
 
 ## Decisiones tomadas
 
@@ -64,26 +116,37 @@
 | Astro estático + PHP/MySQL en cPanel | El hosting no tiene Node. Se sube `dist/` a `public_html` y el backend corre allí mismo. |
 | Pago con Flow.cl | Lo eligió el cliente: Webpay, tarjetas y transferencia en Chile. |
 | Español + inglés, con slugs distintos por idioma | Público nacional y extranjero, y mejor SEO en cada idioma. |
-| Los precios cobrados salen de la base de datos (`departures`) | El servidor recalcula el total y nunca confía en el navegador. `tour.ts` solo define el precio que se muestra. |
+| Los precios cobrados salen de la base de datos (`departures`) | El servidor recalcula el total y nunca confía en el navegador. `tour.ts` solo define el precio que se muestra: al cambiar el precio, hay que actualizar ambos. |
+| "Por adulto" en vez de "por persona", y "Adulto" en vez de "desde" en la barra móvil | Con tarifa de niños, "por persona" y "desde $170.000" ya no eran correctos. |
 | Cupos apartados 20 minutos mientras se paga | Evita la sobreventa. Si el pago no se completa, los cupos se liberan solos. |
 | Marca: **Costa Carrera Travel**, dominio travelsanrafael.cl | Confirmada por el cliente. Coincide con el logo. |
-| Tipografía Archivo, solo fotos propias, logo JPEG actual | Supuestos por defecto, porque esas preguntas quedaron sin respuesta. |
+| Tipografía Archivo y solo fotos propias | Supuestos por defecto, porque esas preguntas quedaron sin respuesta. |
+| Logo como PNG transparente generado desde el SVG | El SVG pesa 466 KB porque es una imagen embebida. El PNG del header pesa 42 KB y se ve nítido en pantallas de alta resolución. |
+| Header siempre blanco y nombre en texto en el footer | Las letras del logo son negras y no se leerían sobre la foto del hero ni sobre el footer negro. |
 | Animaciones en JS propio (~5 KB), sin GSAP ni AOS | Menos peso. Todo respeta `prefers-reduced-motion` y el contenido se ve sin JS. |
-| Descartados: cursor personalizado, partículas y video en autoplay | Afectan el rendimiento y la accesibilidad. |
-| Header siempre blanco | Las letras del logo son negras y no se leerían sobre la foto del hero. |
+| Descartados: cursor personalizado y partículas | Afectan el rendimiento y la accesibilidad. |
+| Video en autoplay solo en el cupón, por pedido del cliente | Corto (menos de 3 s, 354 KB), sin sonido, en bucle, y se pausa fuera de pantalla y con "reducir movimiento". |
+| Cupón azul `#408dde` y botón verde `#9fed8b` | Colores pedidos por el cliente, fuera de la paleta del logo. Los textos van grandes y en negrita para mantener el contraste sobre el azul. |
+| Fotos de WhatsApp reducidas a 1200 px (1600 px las de ancho completo) | Mismo tamaño que el resto del sitio, para que la página cargue rápido. |
+| Galería con 3n + 3 fotos (12, 15, 18, 21…) | Así la grilla queda completa en escritorio y en móvil. |
 | Zip con `tar -a` en vez de Compress-Archive | Compress-Archive usa `\` en las rutas y rompe la extracción en cPanel. |
 | `.gitignore` excluye `config.php` y `tsr-config.php` | Esos archivos guardan claves de la base y de Flow, y no deben ir a GitHub. |
 
 ## Pendiente
 
 ### Contenido (lo entrega el cliente; buscar `TODO` en el código)
+- [x] Tarifas: $170.000 adulto y $120.000 niño hasta 12 años (18-11-2026).
+- [x] Logo transparente (18-11-2026).
+- [x] Foto del paso 2 del itinerario (puerto de embarque).
+- [ ] **Definir qué descuentos se ofrecen**, para responder cuando escriban por el cupón.
+- [ ] Confirmar si el sello **Confianza Turística (COVID-19)** sigue vigente. Si no, se quita del footer.
 - [ ] Confirmar la temporada de operación. Hoy dice "septiembre a abril".
 - [ ] Confirmar si se cobra la entrada a CONAF y si hay guía en inglés.
-- [x] Logo transparente, recibido el 18-11-2026 (PNG generado desde el SVG del cliente).
-- [ ] Fotos de los pasos 1 y 2 del itinerario (bus, Valle Exploradores) y, si hay, del desayuno a bordo.
+- [ ] Foto del paso 1 del itinerario (salida en bus) y, si hay, del desayuno a bordo.
 - [ ] Coordenadas de la oficina, redes sociales y razón social.
 - [ ] Historia real del equipo en *Nosotros*.
 - [ ] Política de cancelación definitiva en *Términos*.
+- [ ] Opcional: logo en SVG vectorial real, y una versión en blanco para fondos oscuros.
 
 ### Puesta en marcha (pasos detallados en README.md)
 - [ ] Respaldar el WordPress actual (archivos y base de datos).
@@ -103,14 +166,14 @@
 ### No verificado todavía
 - Reserva completa con pago real: necesita el hosting con MySQL y el sandbox de Flow.
 - Calendario con fechas reales seleccionables.
-- Fluidez de las animaciones con scroll real.
+- Fluidez de las animaciones con scroll real, incluido el cupón: el latido del botón, el brillo y el video.
 - Safari y celulares físicos. Solo se revisó con capturas de Edge a 1440, 768 y 390 px.
 
 ## Siguiente paso
 
-**Instalar el sitio en el hosting y probar una reserva en el sandbox de Flow**, siguiendo los pasos de "Puesta en marcha en cPanel" del README. Es lo único que falta para que los días del calendario se puedan seleccionar y para confirmar que el pago, los correos y el panel funcionan de punta a punta.
+**Instalar el sitio en el hosting y probar una reserva en el sandbox de Flow**, siguiendo los pasos de "Puesta en marcha en cPanel" del README. Es lo único que falta para que los días del calendario se puedan seleccionar y para confirmar que el pago, los correos y el panel funcionan de punta a punta. Al crear las salidas, el formulario ya trae los precios nuevos.
 
-Mientras tanto, conviene pedir al cliente la temporada confirmada.
+Mientras tanto, conviene definir los descuentos del cupón y pedir al cliente la temporada confirmada.
 
 ## Cómo retomar
 
