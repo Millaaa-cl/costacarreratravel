@@ -1,0 +1,26 @@
+---
+/**
+ * Olas del logo Costa Carrera Travel: tres capas (turquesa claro, turquesa y el color de la sección siguiente).
+ * Cada trazo se repite dos veces en un SVG del 200% de ancho para que la animación sea un bucle continuo.
+ * `to` indica el color de la sección que viene después (paper | ice | ink).
+ */
+interface Props { to?: 'paper' | 'ice' | 'ink' }
+const { to = 'paper' } = Astro.props;
+
+// Genera una ola periódica: amplitud a, línea base y, n crestas en 1440 px; se repite 2 veces.
+const wave = (y: number, a: number, n: number, phase = 0) => {
+  const W = 1440, seg = W / n;
+  let d = `M0 ${y}`;
+  for (let i = 0; i < n * 2; i++) {
+    const x = i * seg;
+    const up = (i + phase) % 2 === 0 ? -a : a;
+    d += ` C${x + seg * 0.35} ${y + up} ${x + seg * 0.65} ${y + up} ${x + seg} ${y}`;
+  }
+  return `${d} L${W * 2} 120 L0 120 Z`;
+};
+---
+<div class:list={['waves', { 'waves--ice': to === 'ice', 'waves--ink': to === 'ink' }]} aria-hidden="true">
+  <svg class="w1" viewBox="0 0 2880 120" preserveAspectRatio="none"><path d={wave(46, 22, 4)} /></svg>
+  <svg class="w2" viewBox="0 0 2880 120" preserveAspectRatio="none"><path d={wave(62, 18, 2, 1)} /></svg>
+  <svg class="w3" viewBox="0 0 2880 120" preserveAspectRatio="none"><path d={wave(84, 12, 6)} /></svg>
+</div>

@@ -1,0 +1,35 @@
+---
+import ProsePage from '../../../views/ProsePage.astro';
+import { routes } from '../../../i18n/routes';
+---
+<ProsePage lang="en" routeKey="postGlacier" parent={{ name: 'Blog', path: routes.blog.en }} article={{ date: '2026-11-17' }}
+  title="San Rafael Glacier: facts, history and how to visit"
+  description="Key facts about the San Rafael Glacier and Laguna San Rafael National Park: Northern Patagonian Ice Field, Mount San Valentín, UNESCO Biosphere Reserve and how to visit."
+  h1="San Rafael Glacier: facts, history and why to visit" kicker="Know the destination">
+  <p><strong>Short answer:</strong> the San Rafael Glacier flows from the <strong>Northern Patagonian Ice Field</strong> into San Rafael Lagoon, in Chile's Aysén Region. It is one of the tidewater glaciers closest to the equator anywhere in the world and lies within <strong>Laguna San Rafael National Park</strong>, created in 1959 and declared a UNESCO Biosphere Reserve in 1979.</p>
+
+  <h2>Key facts</h2>
+  <table>
+    <tbody>
+      <tr><th>Location</th><td>Laguna San Rafael National Park, Aysén Region, Chile</td></tr>
+      <tr><th>Source</th><td>Northern Patagonian Ice Field, the second-largest ice field in Patagonia</td></tr>
+      <tr><th>Nearby peak</th><td>Mount San Valentín, the highest mountain in Patagonia (about 4,000 m)</td></tr>
+      <tr><th>Protection</th><td>National Park since 1959, UNESCO Biosphere Reserve since 1979</td></tr>
+      <tr><th>Access</th><td>By water or air only. The easiest way is the boat tour from Puerto Río Tranquilo</td></tr>
+    </tbody>
+  </table>
+
+  <h2>A retreating glacier</h2>
+  <p>The San Rafael Glacier has retreated several kilometres since the 19th century, and its front changes every year. On board, guides explain how glaciers form, why the ice looks blue and what its retreat tells us about climate change. That makes visiting it today a unique experience.</p>
+
+  <h2>History</h2>
+  <p>Spanish explorers sailed the lagoon in the late 18th century, followed by scientific and mapping expeditions. In the 20th century there was an unfinished project to cut a canal through the Isthmus of Ofqui to link the lagoon with the Gulf of Penas. Today the area is protected and visited with licensed operators.</p>
+
+  <h2>What you will see</h2>
+  <ul>
+    <li>Icebergs in striking shapes and shades of blue floating in the lagoon.</li>
+    <li>The glacier front and, with luck, ice calving.</li>
+    <li>Patagonian evergreen forest, waterfalls and wildlife such as seabirds and sea lions.</li>
+  </ul>
+  <p><a class="btn btn--primary" href={routes.tour.en + '#reservar'}>Book the glacier tour</a></p>
+</ProsePage>

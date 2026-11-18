@@ -1,0 +1,50 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { content } from '../i18n/content';
+import { routes, type Lang } from '../i18n/routes';
+import { faqSchema, breadcrumbSchema } from '../lib/schema';
+import { tour, formatCLP } from '../data/tour';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = content[lang];
+const es = lang === 'es';
+
+// Preguntas extra (solo en esta página) que amplían la cobertura de búsquedas.
+const extra = es ? [
+  { q: '¿Me puedo marear en la navegación?', a: 'Algunos tramos pueden tener oleaje, sobre todo en el Golfo Elefantes. Si eres sensible al mareo, toma un medicamento preventivo antes de embarcar y ubícate en la parte trasera de la lancha.' },
+  { q: '¿Se puede bajar al glaciar?', a: 'No. Por seguridad, la visita se hace desde la embarcación, a una distancia prudente del frente del glaciar, porque los desprendimientos de hielo generan olas.' },
+  { q: '¿Necesito estar en buena forma física?', a: 'No se requiere preparación física especial: la mayor parte del día transcurre sentado en el vehículo y en la lancha. Avísanos si tienes movilidad reducida o alguna condición médica.' },
+  { q: '¿Con cuánta anticipación debo reservar?', a: `Recomendamos reservar con al menos dos semanas de anticipación en enero y febrero, porque cada salida tiene un máximo de ${tour.capacity} pasajeros.` },
+  { q: '¿El tour opera todos los días?', a: 'Durante la temporada hay salidas casi todos los días. Las fechas disponibles y los cupos se ven en tiempo real en el calendario de reservas.' },
+] : [
+  { q: 'Will I get seasick?', a: 'Some stretches can be choppy, especially in the Gulf of Elefantes. If you are prone to seasickness, take preventive medication before boarding and sit at the back of the boat.' },
+  { q: 'Can we land on the glacier?', a: 'No. For safety, the visit takes place from the boat at a prudent distance from the glacier front, since calving ice creates waves.' },
+  { q: 'Do I need to be physically fit?', a: 'No special fitness is required: most of the day is spent seated in the vehicle and on the boat. Let us know about reduced mobility or medical conditions.' },
+  { q: 'How far in advance should I book?', a: `We recommend booking at least two weeks ahead in January and February, as each departure is limited to ${tour.capacity} passengers.` },
+  { q: 'Does the tour run every day?', a: 'During the season there are departures almost every day. Available dates and seats are shown live on the booking calendar.' },
+];
+const all = [...t.faq, ...extra];
+const crumbs = [{ name: es ? 'Inicio' : 'Home', path: routes.home[lang] }, { name: t.faqH, path: routes.faq[lang] }];
+const seo = es
+  ? { title: 'Preguntas frecuentes del tour Laguna San Rafael', description: `Precio (desde ${formatCLP(tour.priceFromCLP)}), duración, punto de salida, clima, qué llevar y política de cancelación del tour al Glaciar San Rafael.` }
+  : { title: 'San Rafael Lagoon tour FAQ', description: `Price (from ${formatCLP(tour.priceFromCLP)}), duration, departure point, weather, what to bring and cancellation policy for the San Rafael Glacier tour.` };
+---
+<Base lang={lang} title={seo.title} description={seo.description} routeKey="faq" schema={[faqSchema(all), breadcrumbSchema(crumbs)]}>
+  <PageHero title={t.faqH} kicker="Laguna San Rafael" lead={t.answer.p} crumbs={crumbs} />
+  <section class="section">
+    <div class="container">
+      <div class="faq">
+        {all.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+      </div>
+      <p style="margin-top:32px">{es ? '¿Tienes otra pregunta?' : 'Have another question?'} <a href={routes.contact[lang]}>{es ? 'Contáctanos' : 'Contact us'}</a>.</p>
+    </div>
+  </section>
+  <section class="section section--deep cta-band">
+    <div class="container">
+      <h2>{t.cta.h}</h2><p>{t.cta.p}</p>
+      <a class="btn btn--primary" href={`${routes.tour[lang]}#reservar`}>{t.bookNow}</a>
+    </div>
+  </section>
+</Base>

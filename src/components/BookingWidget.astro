@@ -1,0 +1,209 @@
+---
+/**
+ * Widget de reserva: calendario con disponibilidad real, pasajeros y datos del cliente.
+ * Habla con el backend PHP en /api/ (availability.php y booking.php) y redirige a Flow para pagar.
+ * JS vanilla (~4 KB): no carga ningún framework.
+ */
+import { content } from '../i18n/content';
+import { routes, type Lang } from '../i18n/routes';
+import Icon from './Icon.astro';
+import { waLink, tour, formatCLP } from '../data/tour';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = content[lang].booking;
+const i18n = { ...t, locale: lang === 'es' ? 'es-CL' : 'en-US', lang, wa: waLink(content[lang].whatsappMsg) };
+---
+<aside class="booking" id="reservar" aria-labelledby="h-booking" data-i18n={JSON.stringify(i18n)}>
+  <div class="booking__head">
+    <h2 id="h-booking">{t.h}</h2>
+    <p class="booking__price" style="margin:0"><strong>{formatCLP(tour.priceFromCLP)}</strong><small>{content[lang].perPerson}</small></p>
+  </div>
+
+  <h3><span class="n">01</span>{t.step1}</h3>
+  <div class="cal">
+    <div class="cal__head">
+      <button type="button" class="cal__nav" data-prev aria-label={t.prev}>‹</button>
+      <strong data-month aria-live="polite"></strong>
+      <button type="button" class="cal__nav" data-next aria-label={t.next}>›</button>
+    </div>
+    <div class="cal__grid" data-grid role="grid"></div>
+    <p class="cal__msg" data-msg role="status">{t.loading}</p>
+  </div>
+
+  <form data-form novalidate>
+    <h3><span class="n">02</span>{t.step2}</h3>
+    <div class="pax">
+      <span>{t.adults}</span>
+      <div class="pax__ctrl">
+        <button type="button" data-dec="adults" aria-label="−">−</button>
+        <output data-out="adults">1</output>
+        <button type="button" data-inc="adults" aria-label="+">+</button>
+      </div>
+    </div>
+    <div class="pax">
+      <span>{t.children}</span>
+      <div class="pax__ctrl">
+        <button type="button" data-dec="children" aria-label="−">−</button>
+        <output data-out="children">0</output>
+        <button type="button" data-inc="children" aria-label="+">+</button>
+      </div>
+    </div>
+
+    <h3><span class="n">03</span>{t.step3}</h3>
+    <div class="field"><label for="bk-name">{t.name}</label><input id="bk-name" name="name" required autocomplete="name" maxlength="120" /></div>
+    <div class="field"><label for="bk-email">{t.email}</label><input id="bk-email" name="email" type="email" required autocomplete="email" maxlength="160" /></div>
+    <div class="field field--row">
+      <div><label for="bk-phone">{t.phone}</label><input id="bk-phone" name="phone" type="tel" required autocomplete="tel" maxlength="30" /></div>
+      <div><label for="bk-country">{t.country}</label><input id="bk-country" name="country" autocomplete="country-name" maxlength="60" /></div>
+    </div>
+    <div class="field"><label for="bk-lodging">{t.lodging}</label><input id="bk-lodging" name="lodging" maxlength="160" /></div>
+    <div class="field"><label for="bk-notes">{t.notes}</label><textarea id="bk-notes" name="notes" rows="2" maxlength="500"></textarea></div>
+    <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <label class="check"><input type="checkbox" name="terms" required /> <span>{t.terms} <a href={routes.terms[lang]} target="_blank">{t.termsLink}</a></span></label>
+
+    <div class="summary" data-summary hidden></div>
+    <div class="booking__error" data-error role="alert" hidden></div>
+    <button class="btn btn--primary btn--block" type="submit" data-submit disabled>{t.selectDate}</button>
+    <p class="booking__note"><Icon name="lock" />{t.secure}</p>
+    <p class="booking__note">{t.hold}</p>
+  </form>
+</aside>
+
+<script>
+  type Dep = { date: string; seats: number; priceAdult: number; priceChild: number };
+  const root = document.getElementById('reservar');
+  if (root) {
+    const T = JSON.parse(root.dataset.i18n || '{}');
+    const $ = <E extends Element = HTMLElement>(s: string) => root.querySelector(s) as unknown as E;
+    const grid = $('[data-grid]'), msg = $('[data-msg]'), monthEl = $('[data-month]');
+    const prevBtn = $<HTMLButtonElement>('[data-prev]'), nextBtn = $<HTMLButtonElement>('[data-next]');
+    const form = $<HTMLFormElement>('[data-form]'), submit = $<HTMLButtonElement>('[data-submit]');
+    const summary = $('[data-summary]'), errorBox = $('[data-error]');
+    const money = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 });
+    const cache = new Map<string, Dep[]>();
+    const pax = { adults: 1, children: 0 };
+    let month = '', minMonth = '', maxMonth = '';
+    let selected: Dep | null = null;
+
+    const addMonth = (m: string, n: number) => {
+      const [y, mo] = m.split('-').map(Number);
+      const d = new Date(y, mo - 1 + n, 1);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    };
+
+    async function load(m?: string) {
+      msg.textContent = T.loading;
+      try {
+        if (m && cache.has(m)) { month = m; return render(); }
+        const res = await fetch('/api/availability.php' + (m ? `?month=${m}` : ''), { headers: { Accept: 'application/json' } });
+        if (!res.ok) throw new Error(String(res.status));
+        const data = await res.json();
+        month = data.month; minMonth = data.minMonth; maxMonth = data.maxMonth;
+        cache.set(month, data.departures);
+        render();
+      } catch {
+        // Sin backend (o caído): igual se dibuja el mes, sin días disponibles, para que el calendario no quede vacío.
+        // Las flechas siguen funcionando y cada cambio de mes reintenta la consulta.
+        if (!minMonth) {
+          const now = new Date();
+          minMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+          maxMonth = addMonth(minMonth, 11);
+        }
+        month = m || month || minMonth;
+        render();
+        msg.innerHTML = `${T.loadError} <a href="${T.wa}" target="_blank" rel="noopener">WhatsApp</a>`;
+      }
+    }
+
+    function render() {
+      const deps = cache.get(month) || [];
+      const byDate = new Map(deps.map((d) => [d.date, d]));
+      const [y, mo] = month.split('-').map(Number);
+      const label = new Date(y, mo - 1, 1).toLocaleDateString(T.locale, { month: 'long', year: 'numeric' });
+      monthEl.textContent = label.charAt(0).toUpperCase() + label.slice(1); // "Noviembre de 2026"
+      prevBtn.disabled = month <= minMonth;
+      nextBtn.disabled = month >= maxMonth;
+      const first = (new Date(y, mo - 1, 1).getDay() + 6) % 7; // lunes = 0
+      const days = new Date(y, mo, 0).getDate();
+      let html = T.weekdays.map((w: string) => `<span class="cal__wd">${w}</span>`).join('');
+      html += '<span></span>'.repeat(first);
+      for (let d = 1; d <= days; d++) {
+        const iso = `${month}-${String(d).padStart(2, '0')}`;
+        const dep = byDate.get(iso);
+        if (dep && dep.seats > 0) {
+          const cls = ['cal__day', 'cal__day--open', dep.seats <= 5 ? 'cal__day--low' : '', selected?.date === iso ? 'cal__day--sel' : ''].join(' ');
+          html += `<button type="button" class="${cls}" data-date="${iso}" aria-pressed="${selected?.date === iso}" aria-label="${iso}: ${dep.seats} ${T.seatsLeft}">${d}<small>${dep.seats} ${T.seatsLeft}</small></button>`;
+        } else if (dep) {
+          html += `<span class="cal__day cal__day--sold" title="${T.soldOut}">${d}</span>`;
+        } else {
+          html += `<span class="cal__day">${d}</span>`;
+        }
+      }
+      grid.innerHTML = html;
+      msg.textContent = deps.some((d) => d.seats > 0) ? '' : T.noDates;
+      update();
+    }
+
+    function update() {
+      const max = selected ? selected.seats : 20;
+      const total = pax.adults + pax.children;
+      root!.querySelectorAll<HTMLOutputElement>('[data-out]').forEach((o) => (o.textContent = String(pax[o.dataset.out as 'adults'])));
+      root!.querySelectorAll<HTMLButtonElement>('[data-inc]').forEach((b) => (b.disabled = total >= max));
+      root!.querySelector<HTMLButtonElement>('[data-dec="adults"]')!.disabled = pax.adults <= 1;
+      root!.querySelector<HTMLButtonElement>('[data-dec="children"]')!.disabled = pax.children <= 0;
+      if (!selected) { summary.hidden = true; submit.disabled = true; submit.textContent = T.selectDate; return; }
+      const sum = pax.adults * selected.priceAdult + pax.children * selected.priceChild;
+      const dateTxt = new Date(selected.date + 'T12:00:00').toLocaleDateString(T.locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      summary.innerHTML =
+        `<div><span>${T.dateLabel}</span><span style="text-transform:capitalize">${dateTxt}</span></div>` +
+        `<div><span>${pax.adults} × ${T.adults}</span><span>${money.format(pax.adults * selected.priceAdult)}</span></div>` +
+        (pax.children ? `<div><span>${pax.children} × ${T.children}</span><span>${money.format(pax.children * selected.priceChild)}</span></div>` : '') +
+        `<div class="total"><span>${T.total}</span><span>${money.format(sum)}</span></div>`;
+      summary.hidden = false;
+      submit.disabled = false;
+      submit.textContent = `${T.pay} · ${money.format(sum)}`;
+    }
+
+    grid.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-date]');
+      if (!b) return;
+      selected = (cache.get(month) || []).find((d) => d.date === b.dataset.date) || null;
+      if (selected && pax.adults + pax.children > selected.seats) { pax.adults = Math.min(pax.adults, selected.seats); pax.children = Math.max(0, selected.seats - pax.adults); }
+      render();
+    });
+    prevBtn.addEventListener('click', () => load(addMonth(month, -1)));
+    nextBtn.addEventListener('click', () => load(addMonth(month, 1)));
+    root.querySelectorAll<HTMLButtonElement>('[data-inc]').forEach((b) => b.addEventListener('click', () => { pax[b.dataset.inc as 'adults']++; update(); }));
+    root.querySelectorAll<HTMLButtonElement>('[data-dec]').forEach((b) => b.addEventListener('click', () => { pax[b.dataset.dec as 'adults']--; update(); }));
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.hidden = true;
+      if (!selected) return;
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      const fd = new FormData(form);
+      const payload = {
+        date: selected.date, adults: pax.adults, children: pax.children, lang: T.lang,
+        name: fd.get('name'), email: fd.get('email'), phone: fd.get('phone'), country: fd.get('country'),
+        lodging: fd.get('lodging'), notes: fd.get('notes'), website: fd.get('website'),
+      };
+      submit.disabled = true; submit.classList.add('is-loading'); submit.textContent = T.paying;
+      try {
+        const res = await fetch('/api/booking.php', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.url) { window.location.href = data.url; return; }
+        throw new Error(data.error || T.errorGeneric);
+      } catch (err) {
+        submit.classList.remove('is-loading');
+        errorBox.textContent = (err as Error).message || T.errorGeneric;
+        errorBox.hidden = false;
+        cache.delete(month); // refresca cupos (pudieron agotarse)
+        selected = null;
+        load(month);
+      }
+    });
+
+    load();
+  }
+</script>

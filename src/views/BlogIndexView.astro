@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { routes, type Lang } from '../i18n/routes';
+import { posts } from '../data/posts';
+import { breadcrumbSchema } from '../lib/schema';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const es = lang === 'es';
+const h1 = es ? 'Guía de viaje: Laguna San Rafael' : 'Travel guide: San Rafael Lagoon';
+const crumbs = [{ name: es ? 'Inicio' : 'Home', path: routes.home[lang] }, { name: 'Blog', path: routes.blog[lang] }];
+const seo = es
+  ? { title: 'Blog y guía de viaje de la Laguna San Rafael y Aysén', description: 'Consejos para planificar tu visita a la Laguna San Rafael: mejor época, qué llevar, cómo llegar a Puerto Río Tranquilo y datos del Glaciar San Rafael.' }
+  : { title: 'San Rafael Lagoon & Aysén travel guide and blog', description: 'Tips to plan your visit to San Rafael Lagoon: best time to go, what to pack, getting to Puerto Río Tranquilo and San Rafael Glacier facts.' };
+---
+<Base lang={lang} title={seo.title} description={seo.description} routeKey="blog" schema={[breadcrumbSchema(crumbs)]}>
+  <PageHero title={h1} kicker="Blog" lead={es ? 'Todo lo que necesitas saber antes de navegar hasta el Glaciar San Rafael.' : 'Everything you need to know before sailing to the San Rafael Glacier.'} crumbs={crumbs} />
+  <section class="section">
+    <div class="container cards">
+      {posts.map((p) => (
+        <a class="card" href={routes[p.key][lang]}>
+          <h2 style="font-size:1.25rem">{p[lang].title}</h2>
+          <p>{p[lang].excerpt}</p>
+        </a>
+      ))}
+      <a class="card" href={routes.howTo[lang]}>
+        <h2 style="font-size:1.25rem">{es ? 'Cómo llegar a Puerto Río Tranquilo' : 'How to get to Puerto Río Tranquilo'}</h2>
+        <p>{es ? 'Vuelos, buses y rutas por la Carretera Austral.' : 'Flights, buses and Carretera Austral driving routes.'}</p>
+      </a>
+    </div>
+  </section>
+</Base>

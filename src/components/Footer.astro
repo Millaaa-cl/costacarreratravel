@@ -1,0 +1,46 @@
+---
+import { routes, type Lang } from '../i18n/routes';
+import { content } from '../i18n/content';
+import { business } from '../data/tour';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = content[lang];
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <p class="footer-brand">Costa Carrera <span>Travel</span></p>
+        <p style="max-width:40ch">{t.footer.tagline}</p>
+      </div>
+      <div>
+        <h2>{t.footer.explore}</h2>
+        <ul>
+          <li><a href={routes.tour[lang]}>{t.nav.tour}</a></li>
+          <li><a href={routes.howTo[lang]}>{t.nav.howTo}</a></li>
+          <li><a href={routes.faq[lang]}>{t.nav.faq}</a></li>
+          <li><a href={routes.blog[lang]}>{t.nav.blog}</a></li>
+          <li><a href={routes.about[lang]}>{t.nav.about}</a></li>
+          <li><a href={routes.terms[lang]}>{lang === 'es' ? 'Términos y condiciones' : 'Terms and conditions'}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>{t.footer.contact}</h2>
+        <address>
+          <ul>
+            <li>{business.address.street}, {business.address.locality}, {business.address.region}</li>
+            {business.phones.map((p, i) => <li><a href={`tel:${p}`}>{business.phoneDisplay[i]}</a></li>)}
+            <li><a href={`mailto:${business.email}`}>{business.email}</a></li>
+            <li>{t.footer.hours}</li>
+          </ul>
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {year} {business.name}. {t.footer.rights}</span>
+      <span>{lang === 'es' ? 'Pagos procesados por Flow.cl' : 'Payments processed by Flow.cl'}</span>
+    </div>
+  </div>
+</footer>

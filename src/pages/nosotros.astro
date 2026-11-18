@@ -1,0 +1,36 @@
+---
+import ProsePage from '../views/ProsePage.astro';
+import { business, tour } from '../data/tour';
+// TODO: completar con la historia real de la empresa, año de fundación, nombres y certificaciones del equipo (E-E-A-T).
+---
+<ProsePage lang="es" routeKey="about"
+  title="Nosotros: operador local de tours a la Laguna San Rafael"
+  description="Somos un operador local de Aysén especializado en navegaciones a la Laguna San Rafael. Conoce a nuestro equipo, la embarcación y nuestros estándares de seguridad."
+  h1="Quiénes somos" kicker={business.name}
+  lead="Somos un equipo local de la Región de Aysén dedicado a mostrar uno de los glaciares más impresionantes de la Patagonia, con seguridad y respeto por el entorno.">
+  <h2>Operador local de Aysén</h2>
+  <p>{business.name} es parte de {business.legalName} y opera desde {business.address.locality}. Conocemos los canales, el clima y la historia de esta zona porque vivimos aquí. Esa experiencia se nota en cada salida: elegimos la ruta según las condiciones del día y siempre ponemos la seguridad primero.</p>
+
+  <h2>Nuestro equipo</h2>
+  <ul>
+    <li><strong>Patrones de nave</strong> con habilitación de la Autoridad Marítima (DIRECTEMAR).</li>
+    <li><strong>Guías certificados</strong>, con formación en primeros auxilios y en interpretación del patrimonio natural.</li>
+    <li><strong>Equipo de oficina</strong> que te atiende de lunes a domingo, de {business.hours} hrs.</li>
+  </ul>
+
+  <h2>Seguridad</h2>
+  <p>Nuestra lancha tiene capacidad para {tour.capacity} pasajeros y casco de polietileno de alta densidad (HDPE). Lleva chalecos salvavidas para todos, radio VHF, botiquín y el equipamiento que exige la normativa. No zarpamos si la Autoridad Marítima cierra el puerto o si las condiciones no son seguras.</p>
+
+  <h2>Turismo responsable</h2>
+  <p>El Parque Nacional Laguna San Rafael es Reserva de la Biosfera de la UNESCO. Trabajamos con grupos pequeños, no dejamos residuos y respetamos las distancias con la fauna y el frente del glaciar.</p>
+
+  <h2>Datos de la empresa</h2>
+  <table>
+    <tbody>
+      <tr><th>Razón social</th><td>{business.legalName}</td></tr>
+      <tr><th>Dirección</th><td>{business.address.street}, {business.address.locality}, {business.address.region}</td></tr>
+      <tr><th>Teléfono</th><td>{business.phoneDisplay.join(' · ')}</td></tr>
+      <tr><th>Correo</th><td><a href={`mailto:${business.email}`}>{business.email}</a></td></tr>
+    </tbody>
+  </table>
+</ProsePage>

@@ -1,0 +1,36 @@
+---
+import ProsePage from '../../views/ProsePage.astro';
+import { tour } from '../../data/tour';
+import { routes } from '../../i18n/routes';
+---
+<ProsePage lang="es" routeKey="postSeason" parent={{ name: 'Blog', path: routes.blog.es }} article={{ date: '2026-11-17' }}
+  title="Mejor época para visitar la Laguna San Rafael (clima mes a mes)"
+  description="¿Cuándo ir a la Laguna San Rafael? Temporada del tour, clima mes a mes, horas de luz y consejos para elegir la mejor fecha para ver el Glaciar San Rafael."
+  h1="¿Cuál es la mejor época para visitar la Laguna San Rafael?" kicker="Planifica tu viaje">
+  <p><strong>Respuesta corta:</strong> la mejor época para visitar la Laguna San Rafael es entre <strong>diciembre y febrero</strong>, cuando hay más horas de luz (hasta 16 horas) y temperaturas más agradables. Los tours operan de {tour.season.es.toLowerCase()}. En noviembre y marzo hay menos visitantes y precios similares, con un clima algo más frío.</p>
+
+  <h2>Temporada del tour</h2>
+  <p>El tour full day sale desde Puerto Río Tranquilo durante la temporada de {tour.season.es.toLowerCase()}. Fuera de ese período las salidas se reducen por el clima y por las horas de luz.</p>
+
+  <h2>Clima mes a mes</h2>
+  <table>
+    <thead><tr><th>Período</th><th>Clima</th><th>Lo bueno</th><th>A considerar</th></tr></thead>
+    <tbody>
+      <tr><td>Sept – Nov (primavera)</td><td>Fresco, días que se alargan</td><td>Menos visitantes, paisaje verde</td><td>Más viento y lluvia</td></tr>
+      <tr><td>Dic – Feb (verano)</td><td>Templado, días largos</td><td>Mejor clima y más luz para fotografiar</td><td>Alta demanda: reserva con anticipación</td></tr>
+      <tr><td>Mar – Abr (otoño)</td><td>Fresco, colores otoñales</td><td>Tranquilidad, luz cálida</td><td>Días más cortos, clima más variable</td></tr>
+    </tbody>
+  </table>
+  <p>En la Región de Aysén el clima cambia rápido: puedes tener sol, lluvia y viento en el mismo día. Por eso cada salida se confirma según las condiciones de navegación y la autorización de la Autoridad Marítima.</p>
+
+  <h2>¿Qué pasa si el día está nublado?</h2>
+  <p>El glaciar se ve igual de impresionante con cielo cubierto. Muchos fotógrafos prefieren la luz difusa porque resalta los tonos azules del hielo. Lo único que suspende la salida son las condiciones de mar inseguras, y en ese caso reprogramamos tu tour o te devolvemos el 100% del valor.</p>
+
+  <h2>Consejos para elegir fecha</h2>
+  <ul>
+    <li>Deja uno o dos días de margen en Puerto Río Tranquilo por si hay que reprogramar por el clima.</li>
+    <li>Reserva con al menos dos semanas de anticipación si viajas en enero o febrero.</li>
+    <li>Revisa en el calendario de reservas los cupos disponibles en tiempo real.</li>
+  </ul>
+  <p><a class="btn btn--primary" href={routes.tour.es + '#reservar'}>Ver fechas disponibles</a></p>
+</ProsePage>

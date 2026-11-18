@@ -1,0 +1,60 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import { routes, type Lang } from '../i18n/routes';
+import { content } from '../i18n/content';
+
+interface Props { lang: Lang; alternates?: { es: string; en: string } }
+const { lang, alternates } = Astro.props;
+const t = content[lang];
+const other: Lang = lang === 'es' ? 'en' : 'es';
+const otherHref = alternates ? alternates[other] : routes.home[other];
+const path = Astro.url.pathname;
+const items = [
+  { href: routes.tour[lang], label: t.nav.tour },
+  { href: routes.howTo[lang], label: t.nav.howTo },
+  { href: routes.faq[lang], label: t.nav.faq },
+  { href: routes.blog[lang], label: t.nav.blog },
+  { href: routes.about[lang], label: t.nav.about },
+  { href: routes.contact[lang], label: t.nav.contact },
+];
+---
+<a class="skip-link" href="#contenido">{t.skip}</a>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href={routes.home[lang]} aria-label={lang === 'es' ? 'Costa Carrera Travel, inicio' : 'Costa Carrera Travel, home'}>
+      <Logo />
+    </a>
+    <nav class="nav" aria-label={lang === 'es' ? 'Principal' : 'Main'}>
+      <ul>
+        {items.map((i) => <li><a href={i.href} aria-current={path.startsWith(i.href) ? 'page' : undefined}>{i.label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="lang-link" href={otherHref} hreflang={other} lang={other}>{other.toUpperCase()}<span class="visually-hidden"> — {t.langSwitch}</span></a>
+      <a class="btn btn--primary" href={`${routes.tour[lang]}#reservar`}>{t.nav.book}</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menú">
+        <Icon name="menu" />
+      </button>
+    </div>
+  </div>
+</header>
+<div class="mobile-nav" id="mobile-nav" hidden>
+  <ul>
+    {items.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+  </ul>
+  <a class="btn btn--primary btn--block" href={`${routes.tour[lang]}#reservar`}>{t.bookNow}</a>
+</div>
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.menu-toggle');
+  const nav = document.getElementById('mobile-nav');
+  btn?.addEventListener('click', () => {
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!open));
+    if (nav) nav.hidden = open;
+    document.body.style.overflow = open ? '' : 'hidden';
+  });
+  nav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+    nav.hidden = true; btn?.setAttribute('aria-expanded', 'false'); document.body.style.overflow = '';
+  }));
+</script>

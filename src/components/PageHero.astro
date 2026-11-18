@@ -1,0 +1,23 @@
+---
+import Waves from './Waves.astro';
+import { images } from '../data/tour';
+
+interface Props { title: string; kicker?: string; lead?: string; crumbs?: { name: string; path: string }[]; image?: string }
+const { title, lead, crumbs = [], image = images.parallax.src } = Astro.props;
+---
+<section class="page-hero">
+  <div class="page-hero__bg"><img src={image} alt="" width="1000" height="1000" decoding="async" /></div>
+  <div class="container">
+    {crumbs.length > 1 && (
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          {crumbs.map((c, i) => i < crumbs.length - 1 ? <li><a href={c.path}>{c.name}</a></li> : <li aria-current="page">{c.name}</li>)}
+        </ol>
+      </nav>
+    )}
+    <h1>{title}</h1>
+    {lead && <p>{lead}</p>}
+    <slot />
+  </div>
+  <Waves to="paper" />
+</section>

@@ -1,0 +1,40 @@
+---
+import ProsePage from '../views/ProsePage.astro';
+import { business } from '../data/tour';
+// TODO: reemplazar con la política de cancelación real y revisarla con un abogado.
+---
+<ProsePage lang="es" routeKey="terms" cta={false}
+  title="Términos, condiciones y política de cancelación"
+  description="Condiciones de reserva, pago, cancelación y reprogramación por clima del tour a la Laguna San Rafael de Costa Carrera Travel."
+  h1="Términos y condiciones">
+  <h2>1. Reservas y pago</h2>
+  <p>La reserva se confirma cuando el pago en línea se procesa a través de Flow.cl. Al confirmarse, recibirás un correo con tu código de reserva. Los precios están en pesos chilenos (CLP) e incluyen IVA.</p>
+
+  <h2>2. Política de cancelación</h2>
+  <table>
+    <thead><tr><th>Aviso de cancelación</th><th>Devolución</th></tr></thead>
+    <tbody>
+      <tr><td>Más de 7 días antes del tour</td><td>100%</td></tr>
+      <tr><td>Entre 7 y 3 días antes</td><td>50%</td></tr>
+      <tr><td>Menos de 72 horas o no presentarse</td><td>Sin devolución</td></tr>
+    </tbody>
+  </table>
+  <p>Para cancelar, escríbenos a <a href={`mailto:${business.email}`}>{business.email}</a> indicando tu código de reserva.</p>
+
+  <h2>3. Clima y condiciones de navegación</h2>
+  <p>Si la Autoridad Marítima cierra el puerto o el operador considera que las condiciones no son seguras, el tour se reprograma para otra fecha disponible o se devuelve el 100% del monto pagado, a elección del pasajero. El itinerario puede modificarse durante el día por razones de seguridad.</p>
+
+  <h2>4. Responsabilidades del pasajero</h2>
+  <ul>
+    <li>Presentarse puntualmente en el punto de encuentro.</li>
+    <li>Informar al reservar cualquier condición médica, alergia o movilidad reducida.</li>
+    <li>Seguir las instrucciones del patrón y del guía y usar el chaleco salvavidas durante la navegación.</li>
+    <li>Los menores de edad deben viajar acompañados por un adulto responsable.</li>
+  </ul>
+
+  <h2>5. Datos personales</h2>
+  <p>Usamos tus datos solo para gestionar tu reserva y comunicarnos contigo, de acuerdo con la Ley N° 19.628 sobre protección de la vida privada. No compartimos tus datos con terceros, salvo con el procesador de pagos.</p>
+
+  <h2>6. Contacto</h2>
+  <p>{business.legalName} · {business.address.street}, {business.address.locality} · {business.phoneDisplay[0]} · {business.email}</p>
+</ProsePage>

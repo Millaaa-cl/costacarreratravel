@@ -1,0 +1,17 @@
+{
+  "name": "travelsanrafael",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "audit": "astro build && node scripts/seo-audit.mjs",
+    "package": "astro build && node scripts/seo-audit.mjs && tar -a -c -f travelsanrafael-public_html.zip -C dist ."
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.5",
+    "astro": "^7.4.12"
+  }
+}

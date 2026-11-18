@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import { routes } from '../i18n/routes';
+---
+<Base lang="es" title="Página no encontrada" description="La página que buscas no existe." noindex>
+  <section class="section">
+    <div class="container" style="max-width:640px;text-align:center">
+      <h1 style="font-size:2.6rem">Esta página se derritió</h1>
+      <p class="lead" style="margin-inline:auto">La página que buscas no existe o cambió de dirección. / This page does not exist.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn--primary" href={routes.tour.es}>Ver el tour</a>
+        <a class="btn btn--ghost" style="color:var(--deep)" href={routes.home.en}>English</a>
+      </div>
+    </div>
+  </section>
+</Base>

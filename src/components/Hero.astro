@@ -1,0 +1,60 @@
+---
+/**
+ * Hero con foto, título extra-condensado y olas del logo animadas en la base.
+ * Es el único momento de carga orquestado del sitio ([data-enter] con retardos escalonados).
+ * El H1 = `over` (línea pequeña) + `title` (línea gigante), para que cada página tenga su H1 propio.
+ */
+import Waves from './Waves.astro';
+import { content } from '../i18n/content';
+import { routes, type Lang } from '../i18n/routes';
+import { images, tour, formatCLP } from '../data/tour';
+
+interface Props {
+  lang: Lang;
+  over: string;
+  title: string;
+  lead: string;
+  crumbs?: { name: string; path: string }[];
+  secondary?: { href: string; label: string };
+  bookHref: string;
+}
+const { lang, over, title, lead, crumbs = [], secondary, bookHref } = Astro.props;
+const t = content[lang];
+---
+<section class="hero">
+  <div class="hero__media">
+    <picture>
+      <source media="(max-width: 700px)" srcset={images.heroMobile.src} width={images.heroMobile.w} height={images.heroMobile.h} />
+      <img src={images.hero.src} alt={images.hero[lang]} width={images.hero.w} height={images.hero.h} fetchpriority="high" decoding="async" />
+    </picture>
+  </div>
+  <div class="container hero__content">
+    {crumbs.length > 1 && (
+      <nav class="breadcrumbs" aria-label="Breadcrumb" data-enter style="--d:0">
+        <ol>{crumbs.map((c, i) => i < crumbs.length - 1 ? <li><a href={c.path}>{c.name}</a></li> : <li aria-current="page">{c.name}</li>)}</ol>
+      </nav>
+    )}
+    <h1>
+      <span class="hero__over" data-enter style="--d:1">{over}</span>
+      <span data-enter style="--d:2;display:block">{title}</span>
+    </h1>
+    <p class="hero__lead" data-enter style="--d:3">{lead}</p>
+    <div class="hero__ctas" data-enter style="--d:4">
+      <a class="btn btn--primary" href={bookHref}>{t.bookNow}</a>
+      {secondary && <a class="btn btn--ghost" href={secondary.href}>{secondary.label}</a>}
+      <span class="hero__price"><strong>{formatCLP(tour.priceFromCLP)}</strong> {t.perPerson}</span>
+    </div>
+  </div>
+  <Waves to="paper" />
+</section>
+
+<div class="keyfacts">
+  <div class="container">
+    <dl>
+      <div><dt>{lang === 'es' ? 'Duración aproximada' : 'Approximate duration'}</dt><dd><span data-count={tour.durationHours}>{tour.durationHours}</span><small>{lang === 'es' ? ' horas' : ' hours'}</small></dd></div>
+      <div><dt>{lang === 'es' ? 'Salida desde Puerto Río Tranquilo' : 'Departure from Puerto Río Tranquilo'}</dt><dd>{tour.departureTime}<small>{lang === 'es' ? ' hrs' : ' am'}</small></dd></div>
+      <div><dt>{lang === 'es' ? 'Pasajeros por salida' : 'Passengers per departure'}</dt><dd><span data-count={tour.capacity}>{tour.capacity}</span><small>{lang === 'es' ? ' máx.' : ' max'}</small></dd></div>
+      <div><dt>{lang === 'es' ? 'Precio por persona' : 'Price per person'}</dt><dd><span data-count={tour.priceFromCLP} data-format="clp">{formatCLP(tour.priceFromCLP)}</span></dd></div>
+    </dl>
+  </div>
+</div>

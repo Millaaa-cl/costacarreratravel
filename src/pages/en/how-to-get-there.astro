@@ -1,0 +1,36 @@
+---
+import ProsePage from '../../views/ProsePage.astro';
+import { tour } from '../../data/tour';
+import { routes } from '../../i18n/routes';
+---
+<ProsePage lang="en" routeKey="howTo"
+  title="How to get to Puerto Río Tranquilo and San Rafael Lagoon"
+  description="How to reach Puerto Río Tranquilo, the starting point of the San Rafael Lagoon tour: flights to Balmaceda, buses from Coyhaique and driving the Carretera Austral."
+  h1="How to get to San Rafael Lagoon" kicker="Practical guide"
+  lead="San Rafael Lagoon can only be reached by water or air. The easiest way is a full-day tour from Puerto Río Tranquilo, on the Carretera Austral.">
+  <p><strong>Short answer:</strong> fly from Santiago to Balmaceda airport (BBA), near Coyhaique, then head south on the Carretera Austral (Route 7) to Puerto Río Tranquilo, about 4–5 hours by road. The tour departs from there at {tour.departureTime}, drives through the Exploradores Valley and sails to the glacier.</p>
+
+  <h2>1. Getting to the Aysén Region</h2>
+  <ul>
+    <li><strong>By air:</strong> there are daily flights from Santiago and Puerto Montt to Balmaceda airport (BBA). The flight from Santiago takes about 2.5 hours.</li>
+    <li><strong>By road:</strong> drive the Carretera Austral from Puerto Montt, with some ferry crossings. Plan several days; it is a classic road trip.</li>
+  </ul>
+
+  <h2>2. From Balmaceda or Coyhaique to Puerto Río Tranquilo</h2>
+  <table>
+    <thead><tr><th>Option</th><th>Approx. time</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Rental car</td><td>4–5 h</td><td>Route 7 is mostly paved, with some gravel sections. Views of Lake General Carrera.</td></tr>
+      <tr><td>Bus from Coyhaique</td><td>5–6 h</td><td>Several departures a week. Book ahead in summer.</td></tr>
+      <tr><td>Private transfer</td><td>4–5 h</td><td>Ask us and we will help you arrange it.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3. From Puerto Río Tranquilo to San Rafael Lagoon</h2>
+  <p>We take care of this part. The tour drives the Exploradores Valley road to Exploradores Bay, then sails by speedboat through rivers and channels into the lagoon and up to the San Rafael Glacier. See the <a href={routes.tour.en + '#itinerario'}>tour itinerary</a>.</p>
+
+  <div class="callout"><p><strong>Tip:</strong> arrive in Puerto Río Tranquilo at least one day before the tour. You will be rested, have a buffer for road delays and can also visit the Marble Caves.</p></div>
+
+  <h2>Where to stay</h2>
+  <p>Puerto Río Tranquilo has hostels, cabins, campsites and lodges. The tour leaves at {tour.departureTime} am from the {tour.meetingPoint.en.charAt(0).toLowerCase() + tour.meetingPoint.en.slice(1)}, so staying near the town centre is convenient.</p>
+</ProsePage>

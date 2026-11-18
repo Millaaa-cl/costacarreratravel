@@ -1,0 +1,35 @@
+---
+import ProsePage from '../../views/ProsePage.astro';
+import { business, tour } from '../../data/tour';
+---
+<ProsePage lang="en" routeKey="about"
+  title="About us: local San Rafael Lagoon tour operator"
+  description="We are a local Aysén operator specialised in boat trips to San Rafael Lagoon. Meet our team, our boat and our safety standards."
+  h1="About us" kicker={business.name}
+  lead="We are a local team from the Aysén Region, dedicated to showing one of Patagonia's most impressive glaciers safely and responsibly.">
+  <h2>A local Aysén operator</h2>
+  <p>{business.name} is part of {business.legalName} and operates from {business.address.locality}. We know the channels, the weather and the history of this area because we live here. That experience shows on every departure: we choose the route according to the day's conditions and always put safety first.</p>
+
+  <h2>Our team</h2>
+  <ul>
+    <li><strong>Boat skippers</strong> licensed by the Chilean Maritime Authority (DIRECTEMAR).</li>
+    <li><strong>Certified guides</strong> trained in first aid and natural heritage interpretation.</li>
+    <li><strong>Office staff</strong> available every day, {business.hours}.</li>
+  </ul>
+
+  <h2>Safety</h2>
+  <p>Our boat carries up to {tour.capacity} passengers and has a high-density polyethylene (HDPE) hull. It is equipped with life vests for everyone, a VHF radio, a first-aid kit and all required safety gear. We do not sail if the Maritime Authority closes the port or conditions are unsafe.</p>
+
+  <h2>Responsible tourism</h2>
+  <p>Laguna San Rafael National Park is a UNESCO Biosphere Reserve. We keep groups small, leave no waste and keep a respectful distance from wildlife and the glacier front.</p>
+
+  <h2>Company details</h2>
+  <table>
+    <tbody>
+      <tr><th>Company</th><td>{business.legalName}</td></tr>
+      <tr><th>Address</th><td>{business.address.street}, {business.address.locality}, {business.address.region}, Chile</td></tr>
+      <tr><th>Phone</th><td>{business.phoneDisplay.join(' · ')}</td></tr>
+      <tr><th>Email</th><td><a href={`mailto:${business.email}`}>{business.email}</a></td></tr>
+    </tbody>
+  </table>
+</ProsePage>

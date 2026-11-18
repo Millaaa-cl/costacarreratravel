@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { content } from '../i18n/content';
+import { routes, type Lang } from '../i18n/routes';
+import { business, waLink } from '../data/tour';
+import { breadcrumbSchema } from '../lib/schema';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = content[lang];
+const es = lang === 'es';
+const crumbs = [{ name: es ? 'Inicio' : 'Home', path: routes.home[lang] }, { name: t.nav.contact, path: routes.contact[lang] }];
+const mapQ = encodeURIComponent(`${business.address.street}, ${business.address.locality}, Aysén, Chile`);
+const seo = es
+  ? { title: 'Contacto Costa Carrera Travel, Puerto Río Tranquilo', description: `Contáctanos por WhatsApp, teléfono o correo para el tour a la Laguna San Rafael. Oficina en ${business.address.street}, ${business.address.locality}. Atención de lunes a domingo.` }
+  : { title: 'Contact Costa Carrera Travel, Puerto Río Tranquilo', description: `Contact us by WhatsApp, phone or email about the San Rafael Lagoon tour. Office at ${business.address.street}, ${business.address.locality}. Open every day.` };
+---
+<Base lang={lang} title={seo.title} description={seo.description} routeKey="contact" schema={[breadcrumbSchema(crumbs)]}>
+  <PageHero title={t.nav.contact} kicker="Costa Carrera Travel" lead={es ? 'Respondemos rápido por WhatsApp. Si prefieres, llámanos o escríbenos un correo.' : 'We reply fast on WhatsApp. You can also call or email us.'} crumbs={crumbs} />
+  <section class="section">
+    <div class="container split">
+      <div>
+        <ul class="contact-list">
+          <li><span class="ico"><Icon name="pin" /></span><span>{business.address.street}, {business.address.locality}, {business.address.region}, Chile</span></li>
+          {business.phones.map((p, i) => <li><span class="ico"><Icon name="phone" /></span><a href={`tel:${p}`}>{business.phoneDisplay[i]}</a></li>)}
+          <li><span class="ico"><Icon name="mail" /></span><a href={`mailto:${business.email}`}>{business.email}</a></li>
+          <li><span class="ico"><Icon name="clock" /></span><span>{t.footer.hours}</span></li>
+        </ul>
+        <div class="contact-actions">
+          <a class="btn btn--primary" href={waLink(t.whatsappMsg)} target="_blank" rel="noopener"><Icon name="whatsapp" />WhatsApp</a>
+          <a class="btn btn--ghost" style="color:var(--ink)" href={`${routes.tour[lang]}#reservar`}>{t.bookNow}</a>
+        </div>
+      </div>
+      <iframe class="map-embed" title={es ? 'Mapa de la oficina' : 'Office map'} src={`https://www.google.com/maps?q=${mapQ}&output=embed`} loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </section>
+</Base>

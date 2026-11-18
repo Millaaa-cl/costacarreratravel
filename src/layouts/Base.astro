@@ -1,0 +1,94 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFab from '../components/WhatsAppFab.astro';
+import { routes, type Lang, type RouteKey } from '../i18n/routes';
+import { organizationSchema, websiteSchema } from '../lib/schema';
+import { business } from '../data/tour';
+
+interface Props {
+  lang: Lang;
+  title: string;          // 50–60 caracteres, con la palabra clave al inicio
+  description: string;    // 140–160 caracteres
+  routeKey?: RouteKey;    // para hreflang y el selector de idioma
+  alternates?: { es: string; en: string };
+  image?: string;
+  schema?: object[];
+  noindex?: boolean;
+  ogType?: 'website' | 'article';
+  mobileCta?: boolean;
+}
+
+const { lang, title, description, routeKey, alternates: alt, image = '/images/og-laguna-san-rafael.jpg', schema = [], noindex = false, ogType = 'website', mobileCta = true } = Astro.props;
+const site = Astro.site ?? new URL(business.url);
+const canonical = new URL(Astro.url.pathname, site).href;
+const alternates = alt ?? (routeKey ? routes[routeKey] : undefined);
+const ogImage = new URL(image, site).href;
+// La marca se agrega solo si cabe: Google corta los títulos de más de unos 60 caracteres.
+const fullTitle = title.includes(business.name) || title.length > 42 ? title : `${title} | ${business.name}`;
+const jsonLd = [organizationSchema(), websiteSchema(lang), ...schema];
+---
+<!doctype html>
+<html lang={lang === 'es' ? 'es-CL' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    {alternates && !noindex && (
+      <>
+        <link rel="alternate" hreflang="es-CL" href={new URL(alternates.es, site).href} />
+        <link rel="alternate" hreflang="en" href={new URL(alternates.en, site).href} />
+        <link rel="alternate" hreflang="x-default" href={new URL(alternates.es, site).href} />
+      </>
+    )}
+    <meta name="theme-color" content="#0b2a3c" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph / redes sociales -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={business.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={lang === 'es' ? 'es_CL' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Geo meta (SEO local) -->
+    <meta name="geo.region" content="CL-AI" />
+    <meta name="geo.placename" content={business.address.locality} />
+    <meta name="geo.position" content={`${business.geo.lat};${business.geo.lng}`} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet" />
+
+    <!-- Activa los estados iniciales de animación; si motion.ts no carga en 2,5 s, se muestra todo -->
+    <script is:inline>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__motion)document.documentElement.classList.add('no-motion')},2500);</script>
+
+    {jsonLd.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+  </head>
+  <body>
+    <div class="progress" aria-hidden="true"></div>
+    <Header lang={lang} alternates={alternates} />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <WhatsAppFab lang={lang} mobileCta={mobileCta} />
+    <dialog class="lightbox" aria-label={lang === 'es' ? 'Galería ampliada' : 'Enlarged gallery'}>
+      <figure><img src="data:," alt="" /><figcaption></figcaption></figure>
+      <button type="button" class="lightbox__btn lightbox__prev" aria-label={lang === 'es' ? 'Foto anterior' : 'Previous photo'}>‹</button>
+      <button type="button" class="lightbox__btn lightbox__next" aria-label={lang === 'es' ? 'Foto siguiente' : 'Next photo'}>›</button>
+      <button type="button" class="lightbox__btn lightbox__close" aria-label={lang === 'es' ? 'Cerrar' : 'Close'}>×</button>
+    </dialog>
+    <script>import '../scripts/motion.ts';</script>
+  </body>
+</html>

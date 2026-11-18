@@ -1,0 +1,36 @@
+---
+import ProsePage from '../../../views/ProsePage.astro';
+import { tour } from '../../../data/tour';
+import { routes } from '../../../i18n/routes';
+---
+<ProsePage lang="en" routeKey="postSeason" parent={{ name: 'Blog', path: routes.blog.en }} article={{ date: '2026-11-17' }}
+  title="Best time to visit San Rafael Lagoon (weather by month)"
+  description="When to visit San Rafael Lagoon: tour season, weather by month, daylight hours and tips for choosing the best date to see the San Rafael Glacier."
+  h1="When is the best time to visit San Rafael Lagoon?" kicker="Plan your trip">
+  <p><strong>Short answer:</strong> the best time to visit San Rafael Lagoon is <strong>December to February</strong>, when days are longest (up to 16 hours of daylight) and temperatures are mildest. Tours run from {tour.season.en}. November and March are quieter, with similar prices and slightly cooler weather.</p>
+
+  <h2>Tour season</h2>
+  <p>The full-day tour departs from Puerto Río Tranquilo from {tour.season.en}. Outside that period there are fewer departures because of weather and shorter days.</p>
+
+  <h2>Weather by month</h2>
+  <table>
+    <thead><tr><th>Period</th><th>Weather</th><th>Pros</th><th>Keep in mind</th></tr></thead>
+    <tbody>
+      <tr><td>Sep – Nov (spring)</td><td>Cool, lengthening days</td><td>Fewer visitors, green landscapes</td><td>More wind and rain</td></tr>
+      <tr><td>Dec – Feb (summer)</td><td>Mild, long days</td><td>Best weather and light for photos</td><td>High demand: book early</td></tr>
+      <tr><td>Mar – Apr (autumn)</td><td>Cool, autumn colours</td><td>Peaceful, warm light</td><td>Shorter days, changeable weather</td></tr>
+    </tbody>
+  </table>
+  <p>Weather in Aysén changes fast: you can get sun, rain and wind on the same day. Each departure is confirmed according to sailing conditions and Maritime Authority clearance.</p>
+
+  <h2>What if it is cloudy?</h2>
+  <p>The glacier is just as impressive under cloudy skies. Many photographers prefer soft light because it brings out the blue tones of the ice. Only unsafe sea conditions cancel a departure, and in that case we reschedule or refund 100%.</p>
+
+  <h2>Tips for choosing your date</h2>
+  <ul>
+    <li>Allow one or two buffer days in Puerto Río Tranquilo in case of weather rescheduling.</li>
+    <li>Book at least two weeks ahead for January or February.</li>
+    <li>Check live availability on the booking calendar.</li>
+  </ul>
+  <p><a class="btn btn--primary" href={routes.tour.en + '#reservar'}>See available dates</a></p>
+</ProsePage>

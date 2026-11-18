@@ -1,0 +1,37 @@
+---
+import ProsePage from '../../../views/ProsePage.astro';
+import { routes } from '../../../i18n/routes';
+---
+<ProsePage lang="en" routeKey="postPack" parent={{ name: 'Blog', path: routes.blog.en }} article={{ date: '2026-11-17' }}
+  title="What to pack for the San Rafael Lagoon tour: full checklist"
+  description="Packing list for the San Rafael Lagoon tour: layered clothing, waterproofs, accessories and seasickness tips for a day sailing in Patagonia."
+  h1="What to pack for the San Rafael Lagoon tour" kicker="Packing list">
+  <p><strong>Short answer:</strong> bring layered clothing (thermal base layer, fleece and waterproof jacket), a hat, gloves, sunglasses, sunscreen, a small backpack, a camera with a spare battery and seasickness medication if needed. Life vests and lunch are included.</p>
+
+  <h2>Clothing</h2>
+  <ul>
+    <li><strong>Thermal base layer</strong> (avoid cotton, which holds moisture).</li>
+    <li><strong>Mid layer</strong>: fleece or down jacket.</li>
+    <li><strong>Waterproof jacket and trousers</strong>: the wind near the glacier is cold.</li>
+    <li>Hat, neck gaiter and gloves, even in summer.</li>
+    <li>Comfortable non-slip shoes.</li>
+  </ul>
+
+  <h2>Accessories</h2>
+  <ul>
+    <li>Sunglasses and sunscreen: glare from ice and water is strong.</li>
+    <li>Camera or phone, spare battery and a dry bag or rain cover.</li>
+    <li>Binoculars for birds and sea lions.</li>
+    <li>Reusable water bottle.</li>
+    <li>Cash for tips or purchases.</li>
+  </ul>
+
+  <h2>Health and comfort</h2>
+  <ul>
+    <li>Seasickness medication if you are prone to it: take it before boarding.</li>
+    <li>Your personal medication.</li>
+    <li>Tell us about allergies or dietary needs when booking so we can adapt lunch.</li>
+  </ul>
+
+  <div class="callout"><p><strong>What you do not need:</strong> a life vest, lunch or transport. All of that is included in the <a href={routes.tour.en}>full-day tour</a>.</p></div>
+</ProsePage>

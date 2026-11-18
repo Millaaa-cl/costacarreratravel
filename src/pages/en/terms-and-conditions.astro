@@ -1,0 +1,39 @@
+---
+import ProsePage from '../../views/ProsePage.astro';
+import { business } from '../../data/tour';
+---
+<ProsePage lang="en" routeKey="terms" cta={false}
+  title="Terms, conditions and cancellation policy"
+  description="Booking, payment, cancellation and weather rescheduling conditions for the Costa Carrera Travel tour to San Rafael Lagoon."
+  h1="Terms and conditions">
+  <h2>1. Bookings and payment</h2>
+  <p>Your booking is confirmed once the online payment is processed through Flow.cl. You will then receive an email with your booking code. Prices are in Chilean pesos (CLP) and include VAT.</p>
+
+  <h2>2. Cancellation policy</h2>
+  <table>
+    <thead><tr><th>Cancellation notice</th><th>Refund</th></tr></thead>
+    <tbody>
+      <tr><td>More than 7 days before the tour</td><td>100%</td></tr>
+      <tr><td>Between 7 and 3 days before</td><td>50%</td></tr>
+      <tr><td>Less than 72 hours or no-show</td><td>No refund</td></tr>
+    </tbody>
+  </table>
+  <p>To cancel, email <a href={`mailto:${business.email}`}>{business.email}</a> with your booking code.</p>
+
+  <h2>3. Weather and sailing conditions</h2>
+  <p>If the Maritime Authority closes the port or the operator considers conditions unsafe, the tour is rescheduled to another available date or 100% of the amount paid is refunded, at the passenger's choice. The itinerary may change during the day for safety reasons.</p>
+
+  <h2>4. Passenger responsibilities</h2>
+  <ul>
+    <li>Arrive on time at the meeting point.</li>
+    <li>Report any medical condition, allergy or reduced mobility when booking.</li>
+    <li>Follow the skipper's and guide's instructions and wear the life vest while sailing.</li>
+    <li>Minors must travel with a responsible adult.</li>
+  </ul>
+
+  <h2>5. Personal data</h2>
+  <p>We use your data only to manage your booking and contact you, in accordance with Chilean Law 19.628 on privacy. We do not share your data with third parties other than the payment processor.</p>
+
+  <h2>6. Contact</h2>
+  <p>{business.legalName} · {business.address.street}, {business.address.locality} · {business.phoneDisplay[0]} · {business.email}</p>
+</ProsePage>

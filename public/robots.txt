@@ -1,0 +1,12 @@
+# travelsanrafael.cl
+# Todos los rastreadores, incluidos los bots de IA y de motores de respuesta
+# (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended...), pueden
+# indexar el contenido público. Resumen para LLMs: /llms.txt
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /reserva/
+Disallow: /en/booking/
+
+Sitemap: https://travelsanrafael.cl/sitemap-index.xml

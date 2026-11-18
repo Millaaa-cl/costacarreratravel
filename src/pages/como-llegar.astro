@@ -1,0 +1,37 @@
+---
+import ProsePage from '../views/ProsePage.astro';
+import { tour } from '../data/tour';
+import { routes } from '../i18n/routes';
+// TODO: validar distancias y tiempos con información local actualizada.
+---
+<ProsePage lang="es" routeKey="howTo"
+  title="Cómo llegar a Puerto Río Tranquilo y la Laguna San Rafael"
+  description="Guía para llegar a Puerto Río Tranquilo, punto de partida del tour a la Laguna San Rafael: vuelos a Balmaceda, buses desde Coyhaique y ruta por la Carretera Austral."
+  h1="Cómo llegar a la Laguna San Rafael" kicker="Guía práctica"
+  lead="La Laguna San Rafael solo es accesible por agua o por aire. La forma más directa de llegar es en un tour full day desde Puerto Río Tranquilo, en la Carretera Austral.">
+  <p><strong>Respuesta corta:</strong> vuela de Santiago al aeropuerto de Balmaceda (BBA), cerca de Coyhaique, y sigue por la Carretera Austral (Ruta 7) hacia el sur hasta Puerto Río Tranquilo, a unas 4 a 5 horas por tierra. Desde ahí sale el tour a las {tour.departureTime} hrs, cruza el Valle Exploradores y navega hasta el glaciar.</p>
+
+  <h2>1. Llegar a la Región de Aysén</h2>
+  <ul>
+    <li><strong>En avión:</strong> hay vuelos diarios de Santiago y Puerto Montt al Aeródromo Balmaceda (BBA). El vuelo desde Santiago dura cerca de 2,5 horas.</li>
+    <li><strong>Por tierra:</strong> por la Carretera Austral desde Puerto Montt, combinando tramos en transbordador. Es un viaje de varios días, ideal para un road trip.</li>
+  </ul>
+
+  <h2>2. De Balmaceda o Coyhaique a Puerto Río Tranquilo</h2>
+  <table>
+    <thead><tr><th>Medio</th><th>Tiempo aprox.</th><th>Comentario</th></tr></thead>
+    <tbody>
+      <tr><td>Auto arrendado</td><td>4–5 h</td><td>Ruta 7 asfaltada en gran parte y algunos tramos de ripio. Vistas al Lago General Carrera.</td></tr>
+      <tr><td>Bus desde Coyhaique</td><td>5–6 h</td><td>Salidas varios días a la semana. Conviene reservar con anticipación en verano.</td></tr>
+      <tr><td>Transfer privado</td><td>4–5 h</td><td>Consúltanos y te ayudamos a coordinarlo.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>3. De Puerto Río Tranquilo a la Laguna San Rafael</h2>
+  <p>Este tramo lo hacemos nosotros. El tour recorre en vehículo el camino del Valle Exploradores hasta Bahía Exploradores, y desde allí navega en lancha rápida por ríos y canales hasta la laguna y el frente del Glaciar San Rafael. Más detalles en el <a href={routes.tour.es + '#itinerario'}>itinerario del tour</a>.</p>
+
+  <div class="callout"><p><strong>Consejo:</strong> llega a Puerto Río Tranquilo al menos un día antes del tour. Así descansas, evitas imprevistos del camino y puedes visitar también las Capillas de Mármol.</p></div>
+
+  <h2>Dónde alojarse</h2>
+  <p>Puerto Río Tranquilo tiene hostales, cabañas, campings y lodges. El tour sale a las {tour.departureTime} hrs desde la {tour.meetingPoint.es.charAt(0).toLowerCase() + tour.meetingPoint.es.slice(1)}, así que conviene alojarse cerca del centro del pueblo.</p>
+</ProsePage>

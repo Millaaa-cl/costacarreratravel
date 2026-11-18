@@ -1,0 +1,115 @@
+---
+/**
+ * Ficha del tour: hero con olas, datos clave, contenido a la izquierda y widget de reserva
+ * fijo (sticky) a la derecha. En móvil el widget aparece justo después del resumen.
+ */
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Sections from '../components/Sections.astro';
+import BookingWidget from '../components/BookingWidget.astro';
+import Icon from '../components/Icon.astro';
+import { content } from '../i18n/content';
+import { routes, type Lang } from '../i18n/routes';
+import { tour, images, formatCLP } from '../data/tour';
+import { tourSchema, faqSchema, breadcrumbSchema } from '../lib/schema';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = content[lang];
+const es = lang === 'es';
+const price = formatCLP(tour.priceFromCLP);
+const name = es ? 'Tour Full Day Laguna San Rafael' : 'San Rafael Lagoon Full-Day Tour';
+const crumbs = [
+  { name: es ? 'Inicio' : 'Home', path: routes.home[lang] },
+  { name, path: routes.tour[lang] },
+];
+const seo = es
+  ? { title: 'Tour Full Day Laguna San Rafael: precio, itinerario y reservas', description: `Itinerario, precio (${price} por persona), qué incluye y fechas disponibles del tour en lancha rápida al Glaciar San Rafael. Reserva y paga online con Flow.` }
+  : { title: 'San Rafael Lagoon Full-Day Tour: price, itinerary & booking', description: `Itinerary, price (${price} per person), inclusions and available dates for the speedboat tour to the San Rafael Glacier. Book and pay online.` };
+---
+<Base lang={lang} title={seo.title} description={seo.description} routeKey="tour"
+  schema={[...tourSchema(lang, t.answer.p, t.itinerary.steps), faqSchema(t.faq), breadcrumbSchema(crumbs)]}>
+
+  <Hero lang={lang}
+    over={es ? 'Tour full day' : 'Full-day tour'}
+    title="Laguna San Rafael"
+    lead={t.hero.lead}
+    crumbs={crumbs}
+    bookHref="#reservar"
+    secondary={{ href: '#itinerario', label: t.seeItinerary }} />
+
+  <div class="container tour-layout">
+    <div class="tour-overview">
+      <h2 data-reveal="up">{t.answer.h}</h2>
+      <p class="answer-lead" data-reveal="up">{t.answer.p}</p>
+      <ul class="highlights" data-stagger>
+        {t.trust.map((i) => <li data-reveal="up"><span class="ico"><Icon name={i.icon} /></span><div><strong>{i.t}</strong><span>{i.d}</span></div></li>)}
+      </ul>
+      <div class="collage" data-stagger>
+        {images.collage.map((c) => <figure data-reveal="rise"><img src={c.src} alt={c[lang]} width={c.w} height={c.h} loading="lazy" decoding="async" /></figure>)}
+      </div>
+    </div>
+
+    <BookingWidget lang={lang} />
+
+    <div class="tour-details">
+      <section class="tour-block" id="itinerario" aria-labelledby="h-itinerario">
+        <h2 id="h-itinerario">{t.itinerary.h}</h2>
+        <p class="lead">{t.itinerary.intro}</p>
+        <ol class="route">
+          {t.itinerary.steps.map((s, i) => {
+            const im = images.steps[i];
+            return (
+              <li>
+                <time>{s.time}</time>
+                <div>
+                  <h3>{s.t}</h3>
+                  <p>{s.d}</p>
+                  {im && <figure data-reveal="rise"><img src={im.src} alt={im[lang]} width={im.w} height={im.h} loading="lazy" decoding="async" /></figure>}
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+
+      <section class="tour-block" aria-labelledby="h-incluye">
+        <h2 id="h-incluye">{t.includes.h}</h2>
+        <div class="includes" style="margin-top:28px">
+          <div class="includes__card" data-checks>
+            <h3>{t.includes.yesH}</h3>
+            <ul>{t.includes.yes.map((x) => <li><Icon name="check" class="ok" />{x}</li>)}</ul>
+          </div>
+          <div class="includes__card">
+            <h3>{t.includes.noH}</h3>
+            <ul>{t.includes.no.map((x) => <li><Icon name="x" class="no" />{x}</li>)}</ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="tour-block" aria-labelledby="h-practica">
+        <h2 id="h-practica">{es ? 'Información práctica' : 'Practical information'}</h2>
+        <p class="lead">{es ? 'Lo que necesitas saber antes del día del tour.' : 'What you need to know before tour day.'}</p>
+        <table class="facts">
+          <caption class="visually-hidden">{t.facts.h}</caption>
+          <tbody>{t.facts.rows.map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}</tbody>
+        </table>
+      </section>
+
+      <section class="tour-block" aria-labelledby="h-lancha">
+        <div class="tour-boat">
+          <div class="duo">
+            <img src={images.boat.src} alt={images.boat[lang]} width={images.boat.w} height={images.boat.h} loading="lazy" decoding="async" data-reveal="rise" />
+            <img src={images.boatShore.src} alt={images.boatShore[lang]} width={images.boatShore.w} height={images.boatShore.h} loading="lazy" decoding="async" data-reveal="rise" style="--i:2" />
+          </div>
+          <div>
+            <h2 id="h-lancha">{t.boat.h}</h2>
+            <p style="color:var(--muted)">{t.boat.p}</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <Sections lang={lang} show={['parallax', 'gallery', 'reviews', 'faq', 'map', 'cta']} />
+</Base>
