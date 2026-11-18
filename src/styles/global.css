@@ -31,8 +31,11 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 16px); -webkit-text-size-adjust: 100%; }
-body { margin: 0; font-family: var(--font); font-size: 1.0625rem; line-height: 1.65; font-variation-settings: 'wdth' 100; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+/* Red de seguridad contra el desplazamiento lateral en celulares: "clip" corta lo que sobresale sin volver
+   a html/body contenedores de scroll (con "hidden" se rompería el sticky del header y del widget de reserva).
+   Navegadores antiguos sin "clip" usan el "hidden" de body. */
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 16px); -webkit-text-size-adjust: 100%; overflow-x: clip; }
+body { margin: 0; font-family: var(--font); font-size: 1.0625rem; line-height: 1.65; font-variation-settings: 'wdth' 100; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; overflow-x: hidden; overflow-x: clip; }
 img, svg, video { max-width: 100%; height: auto; display: block; }
 a { color: var(--teal-deep); text-underline-offset: 3px; transition: color .2s; }
 a:hover { color: var(--ink); }
@@ -335,6 +338,9 @@ p { margin: 0 0 1em; }
 
 /* ---------- Reseñas: carrusel arrastrable ---------- */
 .reviews-wrap { display: grid; gap: 40px; align-items: center; }
+/* Sin esto, la columna de la grilla crece al ancho total del carrusel (3 tarjetas ≈ 870 px) y la página
+   se desliza de lado en el celular. Con min-width: 0 el carrusel se desplaza por dentro, como debe. */
+.reviews-wrap > * { min-width: 0; }
 @media (min-width: 1000px) { .reviews-wrap { grid-template-columns: .8fr 1.6fr; } }
 .reviews-photo { margin: 0; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 4/5; display: none; }
 @media (min-width: 1000px) { .reviews-photo { display: block; } }

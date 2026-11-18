@@ -19,7 +19,7 @@ if ($count > 0) {
     $cfgKey = (string)(config()['setup_key'] ?? '');
     if ($cfgKey === '' || str_starts_with($cfgKey, 'CAMBIAR') || !hash_equals($cfgKey, $key)) {
         sleep(2);
-        $msg = 'Clave de instalación incorrecta (revisa setup_key en tsr-config.php).';
+        $msg = 'Clave de instalación incorrecta (revisa setup_key en api/config.php o en tsr-config.php; no puede empezar con "CAMBIAR").';
     } elseif (strlen($user) < 3 || strlen($pass) < 10) {
         $msg = 'El usuario debe tener al menos 3 caracteres y la contraseña al menos 10.';
     } else {

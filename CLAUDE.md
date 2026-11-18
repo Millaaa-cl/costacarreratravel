@@ -16,6 +16,7 @@ El usuario se comunica en español: los textos del sitio, los comentarios y la d
 npm.cmd run dev       # http://localhost:4321 (en PowerShell usar npm.cmd si la ExecutionPolicy bloquea npm.ps1)
 npm.cmd run build     # genera dist/
 npm.cmd run audit     # build + scripts/seo-audit.mjs (title/description/H1/canonical/hreflang/alt/JSON-LD por página; exit 1 si hay advertencias)
+npm.cmd run package:prueba  # igual, pero genera travelsanrafael-PRUEBA.zip para un subdominio de prueba: scripts/staging.mjs agrega noindex (meta + X-Robots-Tag) y bloquea robots.txt. Después vuelve a correr "package" para dejar dist/ limpio.
 npm.cmd run package   # build + audit + travelsanrafael-public_html.zip (usa `tar -a` para que las rutas del zip lleven "/"; Compress-Archive usa "\" y rompe la extracción en cPanel)
 ```
 
@@ -51,10 +52,12 @@ Hay dos mitades que solo se comunican por HTTP:
 - **Revisión visual:** `astro preview` más Edge headless (`msedge --headless=new --screenshot`).
   - Agrega `--force-prefers-reduced-motion`: si no, la captura sale a mitad de las animaciones (contadores incompletos, fotos sin revelar).
   - Edge no baja de unos 500 px de ancho, así que para ver móvil hay que cargar la página dentro de un `<iframe width="390">`.
+  - Para medir desbordes horizontales en móvil no basta el iframe: hay que emular el dispositivo con Edge vía CDP (`--remote-debugging-port`, `Emulation.setDeviceMetricsOverride` con `mobile: true`) y comparar `document.documentElement.scrollWidth` con `clientWidth`. Los celulares ignoran `overflow-x: hidden` en `body`, así que un elemento más ancho que la pantalla hace que la página se deslice de lado.
+  - En grillas CSS, un hijo que contiene un carrusel o una tabla ancha necesita `min-width: 0`; si no, la columna crece al ancho del contenido (pasó con `.reviews-wrap`). Como red de seguridad, `html` y `body` usan `overflow-x: clip`, que no rompe el `position: sticky`.
 - `src/components/BookingWidget.astro` es JS vanilla. Llama a `/api/availability.php` y `/api/booking.php` y redirige a la URL de pago de Flow.
 
 **2. Backend PHP + MySQL (`public/api/`, `public/admin/`, que Astro copia tal cual a `dist/`)**
-- La configuración se carga desde `/home/USUARIO/tsr-config.php` (fuera de public_html), o como alternativa desde `api/config.php`. La plantilla es `api/config.sample.php`. Ver `config()` en `api/lib/bootstrap.php`.
+- La configuración se carga primero desde `api/config.php` (propio de cada copia del sitio, lo que usa el subdominio de prueba) y, si no existe, desde `/home/USUARIO/tsr-config.php` (fuera de public_html, lo recomendado en producción). El `.htaccess` redirige a HTTPS y quita "www" sin fijar el dominio, así que sirve igual en un subdominio. La plantilla es `api/config.sample.php`. Ver `config()` en `api/lib/bootstrap.php`.
 - El esquema de la base está en `sql/schema.sql`: `departures` (fecha, capacidad, `booked`, precios), `bookings` y `admins`.
 - **Los precios que se cobran vienen de la tabla `departures`** (se definen por salida en `/admin/`) y se recalculan en el servidor. El `priceFromCLP` de `tour.ts` solo se muestra en el sitio. Al cambiar el precio, actualiza ambos.
 - Modelo de cupos:

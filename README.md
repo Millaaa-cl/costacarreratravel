@@ -27,6 +27,16 @@ npm run audit        # build + auditoría SEO
 npm run package      # build + auditoría + travelsanrafael-public_html.zip listo para subir
 ```
 
+## Sitio de prueba en un subdominio (antes de reemplazar el WordPress)
+
+1. `npm run package:prueba` genera `travelsanrafael-PRUEBA.zip`. Es igual al sitio real, pero les pide a los buscadores no indexarlo.
+2. En cPanel → *Dominios* (o *Subdominios*), crea `prueba.travelsanrafael.cl`, anota su carpeta raíz y verifica que tenga SSL (*SSL/TLS Status* → *Run AutoSSL*).
+3. Crea una base de datos **aparte** para la prueba e importa `sql/schema.sql`.
+4. Sube y extrae el zip en la carpeta del subdominio.
+5. Copia `api/config.sample.php` como `api/config.php` **dentro de la carpeta del subdominio**. Completa `base_url` = `https://prueba.travelsanrafael.cl`, los datos de la base de prueba, las llaves del **sandbox** de Flow y `'sandbox' => true`.
+6. Entra a `/admin/setup.php`, crea tu usuario, borra `setup.php` y crea algunas salidas.
+7. No protejas el subdominio con contraseña (*Privacidad de directorios*): Flow no podría avisar los pagos a `/api/flow-confirm.php`.
+
 ## Puesta en marcha en cPanel (una sola vez)
 
 1. **Respaldo:** descarga una copia completa del WordPress actual (Administrador de archivos y la base de datos desde phpMyAdmin).

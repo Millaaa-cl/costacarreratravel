@@ -17,7 +17,7 @@ function h($s): string { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'
 function money($n): string { return '$' . number_format((int)$n, 0, ',', '.'); }
 function csrf(): string { return $_SESSION['csrf'] ??= bin2hex(random_bytes(16)); }
 function check_csrf(): void { if (!hash_equals($_SESSION['csrf'] ?? '', (string)($_POST['csrf'] ?? ''))) { http_response_code(403); exit('CSRF inválido'); } }
-function redirect(string $q, string $flash = ''): void { if ($flash) $_SESSION['flash'] = $flash; header("Location: ./$q"); exit; }
+function redirect(string $q, string $flash = '', bool $error = false): void { if ($flash) { $_SESSION['flash'] = $flash; $_SESSION['flash_error'] = $error; } header("Location: ./$q"); exit; }
 function authed(): bool { return !empty($_SESSION['admin_id']) && ($_SESSION['ua'] ?? '') === ($_SERVER['HTTP_USER_AGENT'] ?? ''); }
 
 $p = (string)($_GET['p'] ?? 'bookings');
@@ -60,15 +60,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string)($_POST['action'] ?? '');
 
     if ($action === 'create_departures') {
-        $from = (string)$_POST['from']; $to = (string)$_POST['to'];
+        $from = (string)($_POST['from'] ?? ''); $to = (string)($_POST['to'] ?? '');
         $days = array_map('intval', (array)($_POST['days'] ?? []));
         $cap = max(1, (int)$_POST['capacity']); $pa = max(0, (int)$_POST['price_adult']); $pc = max(0, (int)$_POST['price_child']);
-        $ins = $pdo->prepare('INSERT IGNORE INTO departures (date, capacity, price_adult, price_child) VALUES (?,?,?,?)');
-        $n = 0;
-        for ($t = strtotime($from); $t && $t <= strtotime($to); $t = strtotime('+1 day', $t)) {
-            if (in_array((int)date('N', $t), $days, true)) { $ins->execute([date('Y-m-d', $t), $cap, $pa, $pc]); $n += $ins->rowCount(); }
+        $tFrom = strtotime($from); $tTo = strtotime($to);
+        // Validaciones con mensaje claro (antes, cualquiera de estos casos daba "0 salidas" sin explicación)
+        if (!$tFrom || !$tTo) redirect('?p=departures', '⚠️ Indica las fechas "Desde" y "Hasta".', true);
+        if ($tTo < $tFrom) redirect('?p=departures', '⚠️ La fecha "Hasta" es anterior a "Desde".', true);
+        if (!$days) redirect('?p=departures', '⚠️ Marca al menos un día de salida (Lu, Ma, Mi…).', true);
+        if ($pa <= 0) redirect('?p=departures', '⚠️ El precio adulto debe ser mayor que 0.', true);
+        $back = '?p=departures&month=' . date('Y-m', $tFrom); // volver al mes de la primera fecha creada, no al mes actual
+        try {
+            $ins = $pdo->prepare('INSERT IGNORE INTO departures (date, capacity, price_adult, price_child) VALUES (?,?,?,?)');
+            $n = 0; $skipped = 0;
+            for ($t = $tFrom; $t <= $tTo; $t = strtotime('+1 day', $t)) {
+                if (in_array((int)date('N', $t), $days, true)) {
+                    $ins->execute([date('Y-m-d', $t), $cap, $pa, $pc]);
+                    $ins->rowCount() ? $n++ : $skipped++;
+                }
+            }
+        } catch (Throwable $e) {
+            log_error('create_departures: ' . $e->getMessage());
+            redirect($back, '⚠️ No se pudieron crear las salidas. Error de la base de datos: ' . $e->getMessage(), true);
         }
-        redirect('?p=departures', "Se crearon $n salidas (las fechas existentes no se modificaron).");
+        $msg = "✅ Se crearon $n salidas entre el " . date('d/m/Y', $tFrom) . ' y el ' . date('d/m/Y', $tTo) . '.';
+        if ($skipped) $msg .= " $skipped fechas ya existían y no se modificaron.";
+        if ($tTo > strtotime(date('Y-m-t', $tFrom))) $msg .= ' Usa las flechas ‹ › para ver los otros meses.';
+        redirect($back, $msg);
     }
 
     if ($action === 'update_departure') {
@@ -140,8 +158,19 @@ if ($p === 'departures') {
     $st = $pdo->prepare("SELECT d.*, (SELECT COUNT(*) FROM bookings b WHERE b.departure_id = d.id AND b.status = 'paid') AS paid_count FROM departures d WHERE d.date BETWEEN ? AND ? ORDER BY d.date");
     $st->execute(["$month-01", date('Y-m-t', strtotime("$month-01"))]);
     $rows = $st->fetchAll();
-    layout('Salidas', function () use ($rows, $month) { ?>
+    // Resumen de TODAS las salidas futuras (no solo las del mes que se está viendo)
+    $sum = $pdo->query("SELECT COUNT(*) n, MIN(date) first, MAX(date) last FROM departures WHERE status = 'open' AND date >= CURDATE()")->fetch();
+    layout('Salidas', function () use ($rows, $month, $sum) { ?>
         <h1>Salidas y cupos</h1>
+        <p class="summary-line">
+            <?php if ((int)$sum['n'] > 0): ?>
+                <strong><?= (int)$sum['n'] ?> salidas abiertas</strong> desde el <?= h(date('d/m/Y', strtotime($sum['first']))) ?> hasta el <?= h(date('d/m/Y', strtotime($sum['last']))) ?>.
+                <?php if (substr((string)$sum['first'], 0, 7) !== $month): ?><a href="?p=departures&month=<?= h(substr((string)$sum['first'], 0, 7)) ?>">Ver la primera</a><?php endif; ?>
+                El sitio muestra las fechas desde mañana en adelante.
+            <?php else: ?>
+                <strong>No hay salidas abiertas a futuro.</strong> El calendario del sitio no mostrará fechas hasta que crees alguna.
+            <?php endif; ?>
+        </p>
         <details class="card" <?= $rows ? '' : 'open' ?>>
             <summary><strong>➕ Crear salidas en lote</strong></summary>
             <form method="post" class="grid">
@@ -243,7 +272,7 @@ layout('Reservas', function () use ($rows, $stats) {
 // ---------- Layout ----------
 function layout(string $title, callable $body, bool $nav = true): void
 {
-    $flash = $_SESSION['flash'] ?? ''; unset($_SESSION['flash']);
+    $flash = $_SESSION['flash'] ?? ''; $flashError = !empty($_SESSION['flash_error']); unset($_SESSION['flash'], $_SESSION['flash_error']);
     $p = $_GET['p'] ?? 'bookings'; ?>
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
 <title><?= h($title) ?> · Admin Costa Carrera Travel</title>
@@ -264,12 +293,12 @@ table{border-collapse:collapse;width:100%}th,td{padding:8px 10px;border-bottom:1
 tr.muted td{opacity:.55}.actions{white-space:nowrap}.actions form{display:inline-flex;gap:4px}
 .badge{padding:2px 8px;border-radius:99px;font-size:.78rem;background:#eee}.badge.paid{background:#d6f5e3;color:#1d7a4a}.badge.pending{background:#fff2d6;color:#8a5a00}.badge.cancelled,.badge.rejected,.badge.refunded{background:#fde2e0;color:#b42318}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.stats strong{display:block;font-size:1.6rem}.stats small{color:#4d5b64}
-.flash{background:#d6f5e3;border:1px solid #9fd8b8;padding:10px 14px;border-radius:8px;margin-bottom:16px}.err{color:#b42318}
+.flash{background:#d6f5e3;border:1px solid #9fd8b8;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-weight:600}.flash--err{background:#fde8e6;border-color:#f3b4ad;color:#8a1c12}.summary-line{margin:0 0 16px;color:#33515f}.err{color:#b42318}
 </style></head><body>
 <?php if ($nav): ?><header><strong>Costa Carrera Travel · Admin</strong>
 <a href="?p=bookings" class="<?= $p === 'bookings' ? 'on' : '' ?>">Reservas</a>
 <a href="?p=departures" class="<?= $p === 'departures' ? 'on' : '' ?>">Salidas</a>
 <span class="sp"></span><a href="/" target="_blank">Ver sitio ↗</a><a href="?p=logout">Salir</a></header><?php endif; ?>
-<main><?php if ($flash): ?><div class="flash"><?= h($flash) ?></div><?php endif; $body(); ?></main>
+<main><?php if ($flash): ?><div class="flash<?= $flashError ? ' flash--err' : '' ?>" role="status"><?= h($flash) ?></div><?php endif; $body(); ?></main>
 </body></html>
 <?php }

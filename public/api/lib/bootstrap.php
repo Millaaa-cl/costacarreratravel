@@ -4,21 +4,25 @@ declare(strict_types=1);
 date_default_timezone_set('America/Santiago');
 mb_internal_encoding('UTF-8');
 
-/** Carga la configuración: primero fuera de public_html, si no, junto a la API. */
+/**
+ * Carga la configuración. Primero busca api/config.php (propio de esta copia del sitio: así un
+ * subdominio de prueba nunca lee la configuración de producción); si no existe, usa tsr-config.php
+ * fuera de la carpeta pública (lo recomendado en producción). El .htaccess bloquea api/config.php.
+ */
 function config(): array
 {
     static $cfg = null;
     if ($cfg !== null) return $cfg;
     $candidates = [
+        dirname(__DIR__) . '/config.php',         // <carpeta del sitio>/api/config.php
         dirname(__DIR__, 3) . '/tsr-config.php', // /home/USUARIO/tsr-config.php
-        dirname(__DIR__) . '/config.php',         // public_html/api/config.php
     ];
     foreach ($candidates as $file) {
         if (is_file($file)) { $cfg = require $file; return $cfg; }
     }
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['error' => 'Backend no configurado (falta tsr-config.php).']);
+    echo json_encode(['error' => 'Backend no configurado (falta api/config.php o tsr-config.php).']);
     exit;
 }
 
